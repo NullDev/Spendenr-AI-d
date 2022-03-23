@@ -74,7 +74,7 @@ module.exports = async function(req, res){
 
                 fetch(`${
                     config.server.dev_mode
-                        ? `http://localhost:${config.server.port}/test`
+                        ? `http://localhost:${config.server.port}${config.server.base_url}/test`
                         : config.result_server.uri
                 }`, {
                     method: "POST",
