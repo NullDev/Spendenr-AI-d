@@ -29,7 +29,7 @@ module.exports = function(app){
 
     app.post(config.server.base_url + "/test", (req, res) => test(req, res));
 
-    app.get(config.server.base_url + "*", (req, res) => notFoundHandler(req, res));
+    app.get("*", (req, res) => notFoundHandler(req, res));
 
     logRoutes(getRoutes(app));
 };
