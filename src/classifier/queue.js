@@ -45,7 +45,7 @@ module.exports = async function(req, res){
         "Content-Type": "application/json; charset=utf-8"
     }).status(200).send({ status: 200, message: "Success - Transmitted" });
 
-    log.info("Received new images!");
+    log.info(`Received new ${data.length} image(s)!`);
 
     return data.forEach(async e => {
         let name = `${e.id}__${uuid.v4()}.jpg`;
