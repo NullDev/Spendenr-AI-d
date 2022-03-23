@@ -56,11 +56,9 @@ module.exports = async function(req, res){
         connector.get(e.url, httpStream => {
             let stat = httpStream.pipe(file);
             stat.on("finish", async() => {
-                if (ext !== "jpg"){
-                    // ... 
-                }
-
-                let orgaData = await orga(name);
+                let orgaData = (ext !== "jpg")
+                    ? null
+                    : await orga(name);
 
                 fs.unlink(path.resolve(`./image_cache/${name}`), () => {});
 
@@ -74,20 +72,18 @@ module.exports = async function(req, res){
 
                 log.done(`Finished classifying: { id: ${e.id}, orga: ${orgaData}, amount: ${ocrData} }`);
 
-                /*
-                fetch(`${config.result_server.uri}`, {
+                fetch(`${
+                    config.server.dev_mode
+                        ? `http://localhost:${config.server.port}/test`
+                        : config.result_server.uri
+                }`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json; charset=utf-8"
-                        "Token": config.result_server.secret
+                        "Content-Type": "application/json; charset=utf-8",
+                        token: config.result_server.secret
                     },
-                    body: JSON.stringify({
-                        id: e.id,
-                        orga: orgaData,
-                        ocr: ocrData
-                    })
+                    body: JSON.stringify(responseObject)
                 });
-                */
             });
         });
     });
