@@ -1,14 +1,28 @@
 {
-  "name": "spenden-classify",
-  "version": "1.0.0",
+  "name": "spendenr-ai-d",
+  "private": true,
+  "version": "1.0.1",
   "description": "Orga classification and OCR for donations",
   "main": "src/app.js",
+  "engines": {
+    "node": ">=17.0.0"
+  },
   "scripts": {
     "start": "node src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src",
+    "dev": "npm run lint && npm start"
   },
-  "author": "NullDev / TheShad0w",
-  "license": "MIT",
+  "author": "TheShad0w",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pr0-dev/Spendenr-AI-d.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pr0-dev/Spendenr-AI-d/issues"
+  },
+  "homepage": "https://github.com/pr0-dev/Spendenr-AI-d",
+  "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.17.0",
