@@ -66,7 +66,7 @@ module.exports = async function(req, res){
 
                 log.done(`Finished classifying: { id: ${e.id}, orga: ${orgaData}, amount: ${ocrData} }`);
 
-                fetch(`${
+                await fetch(`${
                     config.server.dev_mode
                         ? `http://localhost:${config.server.port}${config.server.base_url}/test`
                         : config.result_server.uri
@@ -77,7 +77,8 @@ module.exports = async function(req, res){
                         apiAuth: config.result_server.secret
                     },
                     body: JSON.stringify(responseObject)
-                }).then(ress => log.done(ress.body))
+                }).then(response => response.json())
+                    .then(d => console.log(d))
                     .catch(err => log.error(err));
             });
         });
