@@ -1,0 +1,13 @@
+{
+    "server": {
+        "port": 1337,
+        "orga_confidence_threshold": 0.4
+    },
+    "auth": {
+        "secret": ""
+    },
+    "result_server": {
+        "uri": "https://example.com/add",
+        "secret": ""
+    }
+}
