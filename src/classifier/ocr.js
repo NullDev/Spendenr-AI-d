@@ -4,6 +4,10 @@
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
+// core modules
+let fs = require("fs");
+let path = require("path");
+
 // dependencies
 let ocr = require("node-tesseract-ocr");
 
@@ -16,11 +20,11 @@ const rReg = /(\d+(?:(\.|\,)\d+)?)+(\s)*(eur|chf|$|€|euro|franken|dollar)/gi;
 /**
  * Find amount
  *
- * @param {String} url
+ * @param {String} file
  */ // eslint-disable-next-line no-unused-vars
-module.exports = async function(url){
+module.exports = async function(file){
     try {
-        let text = await ocr.recognize(url, { lang: "deu", psm: 3 });
+        let text = await ocr.recognize(fs.readFileSync(`${path.resolve("./image_cache")}/${file}`), { lang: "deu", psm: 3 });
 
         let l = text.match(lReg);
         let r = text.match(rReg);

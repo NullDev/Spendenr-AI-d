@@ -10,6 +10,7 @@
     },
     "result_server": {
         "uri": "https://api.spendenraid.rundesballi.com/editPosts.php",
+        "image_getter": "https://api.spendenraid.rundesballi.com/getJPG.php",
         "secret": ""
     }
 }

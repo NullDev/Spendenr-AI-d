@@ -9,7 +9,6 @@
 // core modules
 let path = require("path");
 let fs = require("fs");
-let http = require("http");
 let https = require("https");
 
 // dependencies
@@ -49,20 +48,15 @@ module.exports = async function(req, res){
     log.info("Received new images!");
 
     return data.forEach(async e => {
-        let ext = e.url.split(".").pop();
-        let name = `${e.id}__${uuid.v4()}.${ext}`;
+        let name = `${e.id}__${uuid.v4()}.jpg`;
         let file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
-        let connector = String(e.url).toLowerCase().startsWith("https") ? https : http;
-        connector.get(e.url, httpStream => {
+        https.get(config.result_server.image_getter + "?postId=" + e.id + "&apiAuth=" + config.result_server.secret, httpStream => {
             let stat = httpStream.pipe(file);
             stat.on("finish", async() => {
-                let orgaData = (ext !== "jpg")
-                    ? null
-                    : await orga(name);
+                let orgaData = await orga(name);
+                let ocrData = await ocr(name);
 
                 fs.unlink(path.resolve(`./image_cache/${name}`), () => {});
-
-                let ocrData = await ocr(e.url);
 
                 let responseObject = {
                     id: e.id,
@@ -80,7 +74,7 @@ module.exports = async function(req, res){
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8",
-                        token: config.result_server.secret
+                        apiAuth: config.result_server.secret
                     },
                     body: JSON.stringify(responseObject)
                 });
