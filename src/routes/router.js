@@ -7,6 +7,7 @@
 // Utils
 let log = require("../utils/logger");
 let getRoutes = require("../utils/getRoutes");
+let config = require("../utils/configHandler").getConfig();
 
 // Routes
 let notFoundHandler = require("./endpoints/404");
@@ -22,13 +23,13 @@ let logRoutes = r => r.forEach(e => log.info(`Route ${e.path} registered with me
  * @param {import("express").Application} app
  */
 module.exports = function(app){
-    app.get("/", (req, res) => index(req, res));
+    app.get(config.server.base_url + "/", (req, res) => index(req, res));
 
-    app.post("/classify", (req, res) => queue(req, res));
+    app.post(config.server.base_url + "/classify", (req, res) => queue(req, res));
 
-    app.post("/test", (req, res) => test(req, res));
+    app.post(config.server.base_url + "/test", (req, res) => test(req, res));
 
-    app.get("*", (req, res) => notFoundHandler(req, res));
+    app.get(config.server.base_url + "*", (req, res) => notFoundHandler(req, res));
 
     logRoutes(getRoutes(app));
 };
