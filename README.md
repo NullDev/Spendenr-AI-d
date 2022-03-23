@@ -1,6 +1,8 @@
 # Spendenr-AI-d
 
-AI powered Spendenraid Auswertung. 
+<p align="center"><img height="300" width="auto" src="https://cdn.discordapp.com/attachments/618781839338897446/956072723166167070/unknown.png" /></p>
+<p align="center"><b>AI powered Spendenraid Auswertung. </b></p>
+<hr>
 
 ## :question: Was macht es?
 
