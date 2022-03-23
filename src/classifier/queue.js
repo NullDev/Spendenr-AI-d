@@ -77,7 +77,8 @@ module.exports = async function(req, res){
                         apiAuth: config.result_server.secret
                     },
                     body: JSON.stringify(responseObject)
-                });
+                }).then(ress => (config.server.dev_mode && console.log(ress)))
+                    .catch(err => log.error(err));
             });
         });
     });
