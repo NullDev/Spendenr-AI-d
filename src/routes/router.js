@@ -10,6 +10,7 @@ let getRoutes = require("../utils/getRoutes");
 
 // Routes
 let notFoundHandler = require("./endpoints/404");
+let test = require("./endpoints/test");
 let queue = require("../classifier/queue");
 
 let logRoutes = r => r.forEach(e => log.info(`Route ${e.path} registered with methods ${(e.methods).join(", ")}`));
@@ -21,6 +22,8 @@ let logRoutes = r => r.forEach(e => log.info(`Route ${e.path} registered with me
  */
 module.exports = function(app){
     app.post("/classify", (req, res) => queue(req, res));
+
+    app.post("/test", (req, res) => test(req, res));
 
     app.get("*", (req, res) => notFoundHandler(req, res));
 
