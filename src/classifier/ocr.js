@@ -25,8 +25,8 @@ module.exports = async function(url){
         let l = text.match(lReg);
         let r = text.match(rReg);
 
-        if (!l || !l.length) return (!r || !r.length) ? null : Number(r[0].replace(/[^0-9.,]/g, ""));
-        return Number(l[0].replace(/[^0-9.,]/g, ""));
+        if (!l || !l.length) return (!r || !r.length) ? null : Number(r[0].replace(/[^0-9.,]/g, "").replace(",", "."));
+        return Number(l[0].replace(/[^0-9.,]/g, "").replace(",", "."));
     }
     catch (e){
         log.error(e?.message);
