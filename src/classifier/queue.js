@@ -50,7 +50,7 @@ module.exports = async function(req, res){
     return data.forEach(async e => {
         let name = `${e.id}__${uuid.v4()}.jpg`;
         let file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
-        https.get(config.result_server.image_getter + "?postId=" + e.id + "&apiAuth=" + config.result_server.secret, httpStream => {
+        https.get(config.result_server.image_getter + "?apiAuth=" + config.result_server.secret + "&postId=" + e.id, httpStream => {
             let stat = httpStream.pipe(file);
             stat.on("finish", async() => {
                 let orgaData = await orga(name);
