@@ -33,7 +33,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "helmet": "^5.0.2",
-    "node-fetch": "^3.2.3",
+    "node-fetch": "^2.6.7",
     "node-tesseract-ocr": "^2.2.1",
     "uuid": "^8.3.2"
   }

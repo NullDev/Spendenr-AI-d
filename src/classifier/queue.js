@@ -14,7 +14,7 @@ let https = require("https");
 
 // dependencies
 let uuid = require("uuid");
-// let fetch = require("node-fetch").default;
+let fetch = require("node-fetch").default;
 
 // Utils
 let config = require("../utils/configHandler").getConfig();

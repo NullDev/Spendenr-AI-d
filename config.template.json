@@ -7,7 +7,7 @@
         "secret": ""
     },
     "result_server": {
-        "uri": "https://example.com/add",
+        "uri": "https://api.spendenraid.rundesballi.com/editPosts.php",
         "secret": ""
     }
 }
