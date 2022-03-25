@@ -56,8 +56,16 @@ module.exports = async function(req, res){
             },
             body: JSON.stringify(responseObject)
         }).then(response => response.json())
-            .then(d => log.done("Sent result: " + JSON.stringify(d)))
-            .catch(err => log.error(err));
+            .then(d => {
+                let r = "";
+                try {
+                    r = JSON.stringify(d);
+                }
+                catch (e){
+                    r = d;
+                }
+                log.done("Sent result: " + r);
+            }).catch(err => log.error(err));
     });
 
     worker.on("error", err => log.error(err));

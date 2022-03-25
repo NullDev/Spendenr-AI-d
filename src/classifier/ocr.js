@@ -25,9 +25,15 @@ module.exports = async function(file){
 
         let m = text.match(
             /((eur|chf|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|\$|€|euro|franken|dollar))*/gi
-        ).filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
+        );
 
-        return Number(m[0].trim().replace(/[^0-9.,]/g, "").replace(",", "."));
+        if (!m || m.length < 1) return null;
+
+        m = m.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
+
+        return (m.length < 1)
+            ? null
+            : Number(m[0].trim().replace(/[^0-9.,]/g, "").replace(",", "."));
     }
     catch (e){
         log.error(e?.message);
