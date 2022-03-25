@@ -4,10 +4,13 @@
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
+// core modules
 let cp = require("child_process");
 let path = require("path");
 
+// utils
 let config = require("../utils/configHandler").getConfig();
+let log = require("../utils/logger");
 
 const ORGA_MAP = {
     krebshilfe: 2,
@@ -22,9 +25,12 @@ const ORGA_MAP = {
  * @param {String} file
  */
 module.exports = async function(file){
-    let result = cp.execSync(`bash ${path.resolve("./model/classify.sh")} ${path.resolve("./image_cache")}/${file}`).toString();
-    let data = result.trim().split("\n")[0].trim().split(" ");
-    return Number(data[data.length - 1].replace(")", "")) >= config.server.orga_confidence_threshold
-        ? ORGA_MAP[data[0]]
+    let result = cp.execSync(`python3.8 ${path.resolve("./model/tag.py")} ${path.resolve("./image_cache")}/${file}`).toString().trim();
+    let data = JSON.parse(result);
+    log.done(`Classified ${file}: ${result}`);
+    let key = Object.keys(data)[0];
+    let first = data[Object.keys(data)[0]];
+    return Number(first) >= config.server.orga_confidence_threshold
+        ? ORGA_MAP[key]
         : null;
 };
