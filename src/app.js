@@ -30,8 +30,9 @@ console.log(
 
 let app = express();
 
-log.info(`Starte ${appname}...`);
+log.info(`Starting ${appname}...`);
 const config = conf.getConfig();
+log.info(`Dev-Mode is ${config.server.dev_mode ? "enabled" : "disabled"}`);
 
 app.enable("trust proxy");
 
