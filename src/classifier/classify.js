@@ -21,24 +21,39 @@ let config = require("../utils/configHandler").getConfig();
 let orga = require("../classifier/orga");
 let ocr = require("../classifier/ocr");
 
-workerData.data.forEach(e => {
+/**
+ * Recursive batch processing
+ *
+ * @param {Array} data
+ * @param {Number} index
+ */
+let classifyItem = async function(data, index){
+    let e = data[index];
     let name = `${e.id}__${uuid.v4()}.jpg`;
     let file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
     https.get(config.result_server.image_getter + "?apiAuth=" + config.result_server.secret + "&postId=" + e.id, httpStream => {
         let stat = httpStream.pipe(file);
         stat.on("finish", async() => {
+            log.done(`Downloaded ${name}`);
+
             let orgaData = await orga(name);
             let ocrData = await ocr(name);
 
             fs.unlink(path.resolve(`./image_cache/${name}`), () => {});
 
-            log.done(`Finished classifying: { id: ${e.id}, orga: ${orgaData}, amount: ${ocrData} }`);
+            log.done(`Parsed Data: { id: ${e.id}, orga: ${orgaData}, amount: ${ocrData} }`);
 
-            return parentPort.postMessage({
+            parentPort.postMessage({
                 id: e.id,
                 orga: orgaData || null,
                 amount: ocrData || null
             });
+
+            return (index + 1 < data.length)
+                ? classifyItem(data, index + 1)
+                : process.exit(0);
         });
     });
-});
+};
+
+classifyItem(workerData.data, 0);
