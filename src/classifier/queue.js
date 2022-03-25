@@ -55,17 +55,14 @@ module.exports = async function(req, res){
                 apiAuth: config.result_server.secret
             },
             body: JSON.stringify(responseObject)
-        }).then(response => response.json())
-            .then(d => {
-                let r = "";
-                try {
-                    r = JSON.stringify(d);
-                }
-                catch (e){
-                    r = d;
-                }
-                log.done("Sent result: " + r);
-            }).catch(err => log.error(err));
+        }).then(response => response.json()).then(d => {
+            let r = "";
+
+            try { r = JSON.stringify(d); }
+            catch (e){ r = d; }
+
+            log.done("Sent result: " + r);
+        }).catch(err => log.error(err));
     });
 
     worker.on("error", err => log.error(err));
