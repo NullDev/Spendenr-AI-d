@@ -7,21 +7,15 @@
 /* eslint-disable curly */
 
 // core modules
+let { Worker } = require("worker_threads");
 let path = require("path");
-let fs = require("fs");
-let https = require("https");
-
-// dependencies
-let uuid = require("uuid");
-let fetch = require("node-fetch").default;
 
 // Utils
 let config = require("../utils/configHandler").getConfig();
 let log = require("../utils/logger");
 
-// Services
-let orga = require("../classifier/orga");
-let ocr = require("../classifier/ocr");
+// dependencies
+let fetch = require("node-fetch").default;
 
 /**
  * Classification queue
@@ -47,40 +41,22 @@ module.exports = async function(req, res){
 
     log.info(`Received ${data.length} new image(s)!`);
 
-    return data.forEach(async e => {
-        let name = `${e.id}__${uuid.v4()}.jpg`;
-        let file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
-        https.get(config.result_server.image_getter + "?apiAuth=" + config.result_server.secret + "&postId=" + e.id, httpStream => {
-            let stat = httpStream.pipe(file);
-            stat.on("finish", async() => {
-                let orgaData = await orga(name);
-                let ocrData = await ocr(name);
+    const worker = new Worker(path.join(__dirname, "classify.js"), { workerData: { data }});
 
-                fs.unlink(path.resolve(`./image_cache/${name}`), () => {});
-
-                let responseObject = {
-                    id: e.id,
-                    orga: orgaData || null,
-                    amount: ocrData || null
-                };
-
-                log.done(`Finished classifying: { id: ${e.id}, orga: ${orgaData}, amount: ${ocrData} }`);
-
-                await fetch(`${
-                    config.server.dev_mode
-                        ? `http://localhost:${config.server.port}${config.server.base_url}/test`
-                        : config.result_server.uri
-                }`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                        apiAuth: config.result_server.secret
-                    },
-                    body: JSON.stringify(responseObject)
-                }).then(response => response.json())
-                    .then(d => console.log(d))
-                    .catch(err => log.error(err));
-            });
-        });
+    return worker.on("message", async(responseObject) => {
+        await fetch(`${
+            config.server.dev_mode
+                ? `http://localhost:${config.server.port}${config.server.base_url}/test`
+                : config.result_server.uri
+        }`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                apiAuth: config.result_server.secret
+            },
+            body: JSON.stringify(responseObject)
+        }).then(response => response.json())
+            .then(d => console.log(d))
+            .catch(err => log.error(err));
     });
 };
