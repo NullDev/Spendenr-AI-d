@@ -32,7 +32,7 @@ let app = express();
 
 log.info(`Starting ${appname}...`);
 const config = conf.getConfig();
-log.info(`Dev-Mode is ${config.server.dev_mode ? "enabled" : "disabled"}`);
+log[config.server.dev_mode ? "warn" : "info"](`Dev-Mode is ${config.server.dev_mode ? "enabled" : "disabled"}`);
 
 app.enable("trust proxy");
 
