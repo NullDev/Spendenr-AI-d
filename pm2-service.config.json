@@ -5,7 +5,7 @@
             "cwd": ".",
             "script": "src/app.js",
             "exec_mode": "cluster",
-            "instances": 1,
+            "instances": 5,
             "env": { "NODE_ENV": "production" },
             "repo": "https://github.com/pr0-dev/Spendenr-AI-d.git",
             "ref": "origin/master"
