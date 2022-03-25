@@ -1,0 +1,42 @@
+{
+	"info": {
+		"_postman_id": "2f88725c-6647-4ce7-8861-76177b4537a5",
+		"name": "spendenr-ai-d",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "spendenr-ai-d",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n\t{ \"id\": 4484774  },\n\t{ \"id\": 4484773  }\n]\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:1337/classify",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"classify"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
