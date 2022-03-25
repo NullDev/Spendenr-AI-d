@@ -1,6 +1,6 @@
 # Spendenr-AI-d
 
-<p align="center"><img height="300" width="auto" src="https://cdn.discordapp.com/attachments/618781839338897446/956072723166167070/unknown.png" /></p>
+<p align="center"><img height="450" width="auto" src="https://i.ibb.co/JpBCvDX/photo-2022-03-25-20-27-44.jpg" /></p>
 <p align="center"><b>AI powered Spendenraid Auswertung. </b></p>
 <hr>
 
