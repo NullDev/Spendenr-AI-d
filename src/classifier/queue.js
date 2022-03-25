@@ -39,11 +39,11 @@ module.exports = async function(req, res){
         "Content-Type": "application/json; charset=utf-8"
     }).status(200).send({ status: 200, message: "Success - Transmitted" });
 
-    log.info(`Received ${data.length} new image(s)!`);
+    log.info(`Received ${data.length} new image${data.length > 1 ? "s" : ""}!`);
 
     const worker = new Worker(path.join(__dirname, "classify.js"), { workerData: { data }});
 
-    return worker.on("message", async(responseObject) => {
+    worker.on("message", async(responseObject) => {
         await fetch(`${
             config.server.dev_mode
                 ? `http://localhost:${config.server.port}${config.server.base_url}/test`
@@ -56,7 +56,16 @@ module.exports = async function(req, res){
             },
             body: JSON.stringify(responseObject)
         }).then(response => response.json())
-            .then(d => console.log(d))
+            .then(d => log.done("Sent result: " + JSON.stringify(d)))
             .catch(err => log.error(err));
     });
+
+    worker.on("error", err => log.error(err));
+
+    worker.on("exit", (code) => ((code !== 0)
+        ? log.error(`Worker stopped with exit code ${code}`)
+        : log.done("Finished batch!"))
+    );
+
+    return 1;
 };
