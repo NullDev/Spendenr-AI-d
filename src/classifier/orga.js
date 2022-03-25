@@ -5,8 +5,10 @@
 // =========================== //
 
 // core modules
-let cp = require("child_process");
 let path = require("path");
+
+// dependencies
+let { process: pr } = require("core-worker");
 
 // utils
 let config = require("../utils/configHandler").getConfig();
@@ -25,9 +27,11 @@ const ORGA_MAP = {
  * @param {String} file
  */
 module.exports = async function(file){
-    let result = cp.execSync(`python3.8 ${path.resolve("./model/tag.py")} ${path.resolve("./image_cache")}/${file}`).toString().trim();
+    let result = (await pr(
+        `${config.server.python_binary} ${path.resolve("./model/tag.py")} ${path.resolve("./image_cache")}/${file}`
+    ).death()).data.toString().trim();
     let data = JSON.parse(result);
-    log.done(`Classified ${file}: ${result}`);
+    log.done(`Classified ${file}:\n                          ${result}`);
     let key = Object.keys(data)[0];
     let first = data[Object.keys(data)[0]];
     return Number(first) >= config.server.orga_confidence_threshold
