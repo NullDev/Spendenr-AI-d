@@ -31,7 +31,7 @@ $ `npm start` <br><br>
 **Achtung**: Zusätzlich benötigte Module außerhalb von NPM: 
 - Docker ([Installationsanleitung](https://docs.docker.com/engine/install/debian/#install-using-the-repository))
 - Tesseract (`sudo apt install tesseract-ocr tesseract-ocr tesseract-ocr-deu`)
-- Python 3.7 (`sudo apt install python3 python3-pip`)
+- Python 3.8.10 ([Installationsanleitung](https://stackoverflow.com/a/62831268/7575111) (3.8.2 mit 3.8.10 ersetzen!))
 - Tensorflow 2.4.0 (`pip install tensorflow==2.4.0`)
 
 <hr>
