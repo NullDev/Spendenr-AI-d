@@ -35,3 +35,10 @@ $ `npm start` <br><br>
 - Tensorflow 2.4.0 (`pip install tensorflow==2.4.0`)
 
 <hr>
+
+## :heart: Aknowledgements
+
+- [RundesBalli](https://github.com/RundesBalli) für das [Spendenraid System](https://github.com/RundesBalli/pr0gramm-Spendenraid)
+- [Chiaki](https://pr0gramm.com/user/Chiaki) für [Hilfe beim Refactoring der classification in Python](https://github.com/pr0-dev/Spendenr-AI-d/blob/master/model/tag.py)
+
+<hr>
