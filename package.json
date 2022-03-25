@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "body-parser": "^1.19.2",
+    "core-worker": "^0.3.5",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "helmet": "^5.0.2",
