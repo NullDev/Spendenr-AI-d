@@ -4,7 +4,7 @@
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
-let log = require("../utils/logger");
+const log = require("../utils/logger");
 
 module.exports = function(port){
     const appPort = port || 3000;

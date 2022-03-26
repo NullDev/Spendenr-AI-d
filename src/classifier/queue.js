@@ -7,15 +7,15 @@
 /* eslint-disable curly */
 
 // core modules
-let { Worker } = require("worker_threads");
-let path = require("path");
+const { Worker } = require("worker_threads");
+const path = require("path");
 
 // Utils
-let config = require("../utils/configHandler").getConfig();
-let log = require("../utils/logger");
+const config = require("../utils/configHandler").getConfig();
+const log = require("../utils/logger");
 
 // dependencies
-let fetch = require("node-fetch").default;
+const fetch = require("node-fetch").default;
 
 /**
  * Classification queue

@@ -5,11 +5,11 @@
 // =========================== //
 
 // Core Modules
-let fs = require("fs");
-let path = require("path");
+const fs = require("fs");
+const path = require("path");
 
 // Utils
-let log = require("./logger");
+const log = require("./logger");
 
 const packagefile = require(path.resolve("package.json"));
 const configPath = path.resolve("config.json");
@@ -20,7 +20,7 @@ const configPath = path.resolve("config.json");
  * @param {object} obj
  * @returns {boolean} whether it is valid JSON
  */
-let validJson = function(obj){
+const validJson = function(obj){
     try {
         JSON.parse(obj);
     }
@@ -35,7 +35,7 @@ let validJson = function(obj){
  *
  * @returns {object} JSON Content
  */
-let getConfig = function(){
+const getConfig = function(){
     if (!fs.existsSync(configPath)){
         log.error("Konfigurationsdatei existiert nicht! Gehe sicher, dass du 'config.template.json' kopierst und als 'config.json' einfügst.");
         process.exit(1);
@@ -61,7 +61,7 @@ let getConfig = function(){
  *
  * @returns {string}
  */
-let getVersion = function(){
+const getVersion = function(){
     return packagefile.version;
 };
 
@@ -70,7 +70,7 @@ let getVersion = function(){
  *
  * @returns {string}
  */
-let getName = function(){
+const getName = function(){
     return packagefile.name;
 };
 
@@ -79,7 +79,7 @@ let getName = function(){
  *
  * @returns {string}
  */
-let getAuthor = function(){
+const getAuthor = function(){
     return packagefile.author;
 };
 

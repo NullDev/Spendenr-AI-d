@@ -5,21 +5,21 @@
 // =========================== //
 
 // Dependencies
-let express = require("express");
-let cors = require("cors");
-let helmet = require("helmet").default;
-let bodyParser = require("body-parser");
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet").default;
+const bodyParser = require("body-parser");
 
 // Utils
-let conf = require("./utils/configHandler");
-let log = require("./utils/logger");
-let portHandler = require("./utils/portCheck");
+const conf = require("./utils/configHandler");
+const log = require("./utils/logger");
+const portHandler = require("./utils/portCheck");
 
-let appname = conf.getName();
-let version = conf.getVersion();
-let devname = conf.getAuthor();
+const appname = conf.getName();
+const version = conf.getVersion();
+const devname = conf.getAuthor();
 
-let splashPadding = 12 + appname.length + version.toString().length;
+const splashPadding = 12 + appname.length + version.toString().length;
 console.log(
     "\n" +
     ` #${"-".repeat(splashPadding)}#\n` +
@@ -28,7 +28,7 @@ console.log(
     ` Copyright (c) ${(new Date()).getFullYear()} ${devname}\n`
 );
 
-let app = express();
+const app = express();
 
 log.info(`Starting ${appname}...`);
 const config = conf.getConfig();

@@ -4,7 +4,7 @@
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
-let log = require("../../utils/logger");
+const log = require("../../utils/logger");
 
 /**
  * Mock-Endpoint to post to localhost for testing

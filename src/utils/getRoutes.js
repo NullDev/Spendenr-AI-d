@@ -4,17 +4,17 @@
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
-let getRouteMethods = function(route){
-    let methods = [];
-    for (let method in route.methods){
+const getRouteMethods = function(route){
+    const methods = [];
+    for (const method in route.methods){
         if (method === "_all") continue;
         methods.push(method.toUpperCase());
     }
     return methods;
 };
 
-let hasParams = function(value){
-    let regExp = /\(\?:\(\[\^\\\/]\+\?\)\)/g;
+const hasParams = function(value){
+    const regExp = /\(\?:\(\[\^\\\/]\+\?\)\)/g;
     return regExp.test(value);
 };
 
@@ -26,9 +26,9 @@ let hasParams = function(value){
  * @param {Array} [endpoints=[]]
  * @returns
  */
-let getRoutes = function(app, path = [], endpoints = []){
-    let regExp = /^\/\^\\\/(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\(\[\^\\\/]\+\?\)\)))\\\/.*/;
-    let stack = app.stack || (app._router && app._router.stack);
+const getRoutes = function(app, path = [], endpoints = []){
+    const regExp = /^\/\^\\\/(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\(\[\^\\\/]\+\?\)\)))\\\/.*/;
+    const stack = app.stack || (app._router && app._router.stack);
 
     stack.forEach(function(val){
         if (val.route){
@@ -54,6 +54,7 @@ let getRoutes = function(app, path = [], endpoints = []){
 
                 if (parsedRegexp !== val.regexp) newPath = regExp.exec(parsedRegexp);
 
+                // eslint-disable-next-line prefer-const
                 parsedPath = newPath[1].replace(/\\\//g, "/");
 
                 if (parsedPath === ":postId/sub-router") console.log(val);

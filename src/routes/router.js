@@ -5,17 +5,17 @@
 // =========================== //
 
 // Utils
-let log = require("../utils/logger");
-let getRoutes = require("../utils/getRoutes");
-let config = require("../utils/configHandler").getConfig();
+const log = require("../utils/logger");
+const getRoutes = require("../utils/getRoutes");
+const config = require("../utils/configHandler").getConfig();
 
 // Routes
-let notFoundHandler = require("./endpoints/404");
-let test = require("./endpoints/test");
-let index = require("./endpoints/index");
-let queue = require("../classifier/queue");
+const notFoundHandler = require("./endpoints/404");
+const test = require("./endpoints/test");
+const index = require("./endpoints/index");
+const queue = require("../classifier/queue");
 
-let logRoutes = r => r.forEach(e => log.info(`Route ${e.path} registered with methods ${(e.methods).join(", ")}`));
+const logRoutes = r => r.forEach(e => log.info(`Route ${e.path} registered with methods ${(e.methods).join(", ")}`));
 
 /**
  * Main Router

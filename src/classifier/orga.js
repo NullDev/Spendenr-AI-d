@@ -5,14 +5,14 @@
 // =========================== //
 
 // core modules
-let path = require("path");
+const path = require("path");
 
 // dependencies
-let { process: pr } = require("core-worker");
+const { process: pr } = require("core-worker");
 
 // utils
-let config = require("../utils/configHandler").getConfig();
-let log = require("../utils/logger");
+const config = require("../utils/configHandler").getConfig();
+const log = require("../utils/logger");
 
 const ORGA_MAP = {
     krebshilfe: 2,
@@ -27,14 +27,15 @@ const ORGA_MAP = {
  * @param {String} file
  */
 module.exports = async function(file){
-    let result = (await pr(
+    const result = (await pr(
         `${config.server.python_binary} ${path.resolve("./model/tag.py")} ${path.resolve("./image_cache")}/${file}`
     ).death()).data.toString().trim();
-    let data = JSON.parse(result);
+
+    const data = JSON.parse(result);
     log.done(`Classified ${file}:\n                          ${result}`);
-    let key = Object.keys(data)[0];
-    let first = data[Object.keys(data)[0]];
-    return Number(first) >= config.server.orga_confidence_threshold
+    const key = Object.keys(data)[0];
+
+    return Number(data[Object.keys(data)[0]]) >= config.server.orga_confidence_threshold
         ? ORGA_MAP[key]
         : null;
 };

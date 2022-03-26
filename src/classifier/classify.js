@@ -5,21 +5,21 @@
 // =========================== //
 
 // core modules
-let path = require("path");
-let fs = require("fs");
-let https = require("https");
-let { parentPort, workerData } = require("worker_threads");
+const path = require("path");
+const fs = require("fs");
+const https = require("https");
+const { parentPort, workerData } = require("worker_threads");
 
 // dependencies
-let uuid = require("uuid");
+const uuid = require("uuid");
 
 // utils
-let log = require("../utils/logger");
-let config = require("../utils/configHandler").getConfig();
+const log = require("../utils/logger");
+const config = require("../utils/configHandler").getConfig();
 
 // Services
-let orga = require("../classifier/orga");
-let ocr = require("../classifier/ocr");
+const orga = require("../classifier/orga");
+const ocr = require("../classifier/ocr");
 
 /**
  * Recursive batch processing
@@ -27,17 +27,19 @@ let ocr = require("../classifier/ocr");
  * @param {Array} data
  * @param {Number} index
  */
-let classifyItem = async function(data, index){
-    let e = data[index];
-    let name = `${e.id}__${uuid.v4()}.jpg`;
-    let file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
+const classifyItem = async function(data, index){
+    const e = data[index];
+    // we can be certain that the format is always jpg, because the API doesn't return other formats
+    const name = `${e.id}__${uuid.v4()}.jpg`;
+    const file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
+
     https.get(config.result_server.image_getter + "?apiAuth=" + config.result_server.secret + "&postId=" + e.id, httpStream => {
-        let stat = httpStream.pipe(file);
+        const stat = httpStream.pipe(file);
         stat.on("finish", async() => {
             log.done(`Downloaded ${name}`);
 
-            let orgaData = await orga(name);
-            let ocrData = await ocr(name);
+            const orgaData = await orga(name);
+            const ocrData = await ocr(name);
 
             fs.unlink(path.resolve(`./image_cache/${name}`), () => {});
 

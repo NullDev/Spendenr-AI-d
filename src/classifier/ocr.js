@@ -5,14 +5,14 @@
 // =========================== //
 
 // core modules
-let fs = require("fs");
-let path = require("path");
+const fs = require("fs");
+const path = require("path");
 
 // dependencies
-let ocr = require("node-tesseract-ocr");
+const ocr = require("node-tesseract-ocr");
 
 // utils
-let log = require("../utils/logger");
+const log = require("../utils/logger");
 
 /**
  * Find amount
@@ -21,19 +21,20 @@ let log = require("../utils/logger");
  */ // eslint-disable-next-line no-unused-vars
 module.exports = async function(file){
     try {
-        let text = await ocr.recognize(fs.readFileSync(`${path.resolve("./image_cache")}/${file}`), { lang: "deu", psm: 3 });
-
-        let m = text.match(
+        let matchGroups = (await ocr.recognize(fs.readFileSync(`${path.resolve("./image_cache")}/${file}`), {
+            lang: "deu",
+            psm: 3
+        })).match(
             /((eur|chf|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|\$|€|euro|franken|dollar))*/gi
         );
 
-        if (!m || m.length < 1) return null;
+        if (!matchGroups || matchGroups.length < 1) return null;
 
-        m = m.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
+        matchGroups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
 
-        return (m.length < 1)
-            ? null
-            : Number(m[0].trim().replace(/[^0-9.,]/g, "").replace(",", "."));
+        return (matchGroups.length < 1)
+            ? null // @ts-ignore
+            : Number(matchGroups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
     }
     catch (e){
         log.error(e?.message);
