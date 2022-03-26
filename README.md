@@ -10,6 +10,12 @@ Diese KI hilft bei der Spendenraid Auswertung. Sie klassifizert Bilder nach Kate
 
 <hr>
 
+## :information_source: Info
+
+Die KI läuft multithreaded & asynchron. Sie bekommt ein "Batch" von Bild-ID's welche nacheinander in einer "queue" abgearbeitet werden (Bild-Download, Orga-Klassifizierung, Spendenbetrag-Evaluierung, Bildlöschung, Senden des Resultats an den Server). Pro Batch wird ein Worker-Thread aufgemacht. Batches können parallel eintreffen, sprich: Wenn ein Batch aktuell abgearbeitet wird, kann zeitgleich ein weiteres eintreffen. Diese werden dann unabhängig voneinander abgearbeitet. Es empfiehlt sich, das ganze mit [PM2](https://pm2.io/) im [Cluster Mode](https://pm2.keymetrics.io/docs/usage/cluster-mode/) mit ca. 5 Instanzen zu starten, damit ein weiteres OSI-Layer 7 horizontal scaling stattfindet. Eine vorgefertigte Konfigurationsdatei [steht im Repository bereit](https://github.com/pr0-dev/Spendenr-AI-d/blob/master/pm2-service.config.json).
+
+<hr>
+
 ## :wrench: Installation
 
 0. Terminal aufmachen und dorthin navigieren, wo man es downloaden möchte <br><br>
