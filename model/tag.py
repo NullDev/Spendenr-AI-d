@@ -15,6 +15,17 @@ candidate = sys.argv[1]
 stream = tf.io.gfile.GFile(candidate, 'rb').read()
 prenex = [l.rstrip() for l in tf.io.gfile.GFile(os.path.join(__location__, "retrained_labels.txt"))]
 
+# The retrained_graph.pb file is a frozen graph (SavedModel).
+# It was created using transfer learning with an Inception v3 architecture model
+# which displays summaries in TensorBoard. The top layer receives a 2048-dimensional 
+# vector for each image as input. A softmax layer was trained on top of this
+# representation. Assuming the softmax layer contains N labels, this corresponds
+# to learning N + 2048*N model parameters corresponding to the learned biases and weights.
+# Inception v3 also creates "bottlenecks" (a neural-network layer with fewer neurons than the 
+# layer below / above) to reduce the number of feature maps (aka channels) in the network, 
+# which, otherwise, tend to increase in each layer. This is achieved by using 1x1 convolutions 
+# with fewer output channels than input channels.
+
 with tf.io.gfile.GFile(os.path.join(__location__, "retrained_graph.pb"), 'rb') as f:
     graph_def = tf.compat.v1.GraphDef()
     graph_def.ParseFromString(f.read())
