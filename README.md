@@ -47,7 +47,7 @@ $ `npm run dev` <br><br>
 
 <hr>
 
-## :heart: Aknowledgements
+## :heart: Acknowledgements
 
 - [RundesBalli](https://github.com/RundesBalli) for his [Spendenraid System](https://github.com/RundesBalli/pr0gramm-Spendenraid)
 - [Chiaki](https://pr0gramm.com/user/Chiaki) for [help with refactoring the classification python script](https://github.com/pr0-dev/Spendenr-AI-d/blob/master/model/tag.py)
