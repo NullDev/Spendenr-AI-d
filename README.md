@@ -8,6 +8,8 @@
 
 This AI helps with the evaluations of donations during the pr0gramm "Spendenraid". It classifies pictures to see what organisation the donation was for, as well as the amount of money donated.
 
+**Live Log-Viewer:** [https://v1.cx/apps/spendenr-ai-d](https://v1.cx/apps/spendenr-ai-d)
+
 <hr>
 
 ## :information_source: Info
