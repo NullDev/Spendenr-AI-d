@@ -4,11 +4,9 @@
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
-// Core Modules
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
-// Utils
 const log = require("./logger");
 
 const packagefile = require(path.resolve("package.json"));
@@ -17,8 +15,8 @@ const configPath = path.resolve("config.json");
 /**
  * Check if the config is valid JSON
  *
- * @param {object} obj
- * @returns {boolean} whether it is valid JSON
+ * @param {Object} obj
+ * @returns {Boolean} whether it is valid JSON
  */
 const validJson = function(obj){
     try {
@@ -37,7 +35,7 @@ const validJson = function(obj){
  */
 const getConfig = function(){
     if (!fs.existsSync(configPath)){
-        log.error("Konfigurationsdatei existiert nicht! Gehe sicher, dass du 'config.template.json' kopierst und als 'config.json' einfügst.");
+        log.error("Config does not exist! Make sure you copy config.template.json and paste it as 'config.json'. Then configure it.");
         process.exit(1);
     }
 
@@ -46,20 +44,20 @@ const getConfig = function(){
         jsondata = String(fs.readFileSync(configPath));
     }
     catch (e){
-        log.error(`Kann Konfigurationsdatei nicht lesen: ${e}`);
+        log.error(`Cannot read config file: ${e}`);
         process.exit(1);
     }
 
     if (validJson(jsondata)) return JSON.parse(jsondata);
 
-    log.error("Konfigurationsdatei ist in keinem validen JSON Format. Stoppe...");
+    log.error("Config is not valid JSON. Stopping...");
     return process.exit(1);
 };
 
 /**
  * Get Package Version
  *
- * @returns {string}
+ * @returns {String}
  */
 const getVersion = function(){
     return packagefile.version;
@@ -68,7 +66,7 @@ const getVersion = function(){
 /**
  * Get Package Name
  *
- * @returns {string}
+ * @returns {String}
  */
 const getName = function(){
     return packagefile.name;
@@ -77,7 +75,7 @@ const getName = function(){
 /**
  * Get Package Author
  *
- * @returns {string}
+ * @returns {String}
  */
 const getAuthor = function(){
     return packagefile.author;
