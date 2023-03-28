@@ -1,9 +1,9 @@
 {
     "server": {
         "port": 1337,
-        "orga_confidence_threshold": 0.4,
+        "orga_confidence_threshold": 0.75,
         "dev_mode": false,
-        "base_url": "",
+        "base_url": "/spenden",
         "python_binary": "/usr/bin/python3.8"
     },
     "auth": {
