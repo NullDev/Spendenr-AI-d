@@ -32,7 +32,7 @@
     "body-parser": "^1.20.2",
     "core-worker": "^0.3.5",
     "cors": "^2.8.5",
-    "express": "^4.17.3",
+    "express": "^4.18.2",
     "helmet": "^6.0.1",
     "node-fetch": "^3.3.1",
     "node-tesseract-ocr": "^2.2.1",
