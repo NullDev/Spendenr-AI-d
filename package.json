@@ -24,7 +24,7 @@
   "homepage": "https://github.com/pr0-dev/Spendenr-AI-d",
   "license": "AGPL-3.0-only",
   "devDependencies": {
-    "@babel/core": "^7.21.4",
+    "@babel/core": "^7.21.5",
     "@babel/eslint-parser": "^7.21.3",
     "eslint": "^8.37.0"
   },
