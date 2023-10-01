@@ -36,6 +36,6 @@
     "helmet": "^7.0.0",
     "node-fetch": "^3.3.2",
     "node-tesseract-ocr": "^2.2.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.1"
   }
 }
