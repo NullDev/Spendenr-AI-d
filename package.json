@@ -33,7 +33,7 @@
     "core-worker": "^0.3.5",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "helmet": "^7.0.0",
+    "helmet": "^7.1.0",
     "node-fetch": "^3.3.2",
     "node-tesseract-ocr": "^2.2.1",
     "uuid": "^9.0.1"
