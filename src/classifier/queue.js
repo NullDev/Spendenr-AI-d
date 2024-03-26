@@ -14,9 +14,6 @@ const path = require("path");
 const config = require("../utils/configHandler").getConfig();
 const log = require("../utils/logger");
 
-// dependencies
-const fetch = require("node-fetch").default;
-
 /**
  * Classification queue
  *
