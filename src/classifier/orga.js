@@ -7,6 +7,11 @@
 // core modules
 const path = require("path");
 
+const fs = require("fs");
+
+// dependencies
+const ocr = require("node-tesseract-ocr");
+
 // dependencies
 const { process: pr } = require("core-worker");
 
@@ -27,6 +32,18 @@ const ORGA_MAP = {
  * @param {String} file
  */
 module.exports = async function(file){
+    const tryWithOcr = (await ocr.recognize(fs.readFileSync(`${path.resolve("./image_cache")}/${file}`), {
+        lang: "deu",
+        psm: 3
+    })).match(
+        /(krebshilfe|kinderkrebsstiftung|dkms|dkfz)/gi
+    );
+
+    if (tryWithOcr && tryWithOcr.length > 0){
+        log.done(`Classified ${file}:\n                          ${tryWithOcr}`);
+        return ORGA_MAP[tryWithOcr[0].toLowerCase().trim()];
+    }
+
     const result = (await pr(
         `${config.server.python_binary} ${path.resolve("./model/tag.py")} ${path.resolve("./image_cache")}/${file}`
     ).death()).data.toString().trim();
