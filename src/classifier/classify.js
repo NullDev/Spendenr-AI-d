@@ -33,7 +33,7 @@ const classifyItem = async function(data, index){
     const name = `${e.id}__${uuid.v4()}.jpg`;
     const file = fs.createWriteStream(path.resolve(`./image_cache/${name}`));
 
-    https.get(config.result_server.image_getter + "?apiAuth=" + config.result_server.secret + "&postId=" + e.id, httpStream => {
+    https.get(config.result_server.image_getter + "?apiAuth=" + config.result_server.secret + "&itemId=" + e.id, httpStream => {
         const stat = httpStream.pipe(file);
         stat.on("finish", async() => {
             log.done(`Downloaded ${name}`);
