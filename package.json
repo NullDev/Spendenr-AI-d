@@ -25,7 +25,7 @@
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/core": "^7.24.5",
-    "@babel/eslint-parser": "^7.24.1",
+    "@babel/eslint-parser": "^7.24.5",
     "eslint": "^9.1.1"
   },
   "dependencies": {
