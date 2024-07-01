@@ -35,6 +35,6 @@
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "node-tesseract-ocr": "^2.2.1",
-    "uuid": "^9.0.1"
+    "uuid": "^10.0.0"
   }
 }
