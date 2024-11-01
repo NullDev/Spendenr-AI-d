@@ -32,7 +32,7 @@
     "body-parser": "^1.20.3",
     "core-worker": "^0.3.5",
     "cors": "^2.8.5",
-    "express": "^4.21.0",
+    "express": "^4.21.1",
     "helmet": "^8.0.0",
     "node-tesseract-ocr": "^2.2.1",
     "uuid": "^10.0.0"
