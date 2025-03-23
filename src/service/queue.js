@@ -1,5 +1,6 @@
 import path from "node:path";
 import { Worker } from "node:worker_threads";
+import { performance } from "node:perf_hooks";
 import Log from "../util/log.js";
 import { config } from "../../config/config.js";
 
@@ -14,7 +15,7 @@ import { config } from "../../config/config.js";
  */
 const sendResult = async function(res){
     await fetch(`${
-        config.server.dev_mode
+        process.env.NODE_ENV !== "production"
             ? `http://localhost:${config.server.port}${config.server.base_url}/test`
             : config.result_server.uri
     }`, {
@@ -45,13 +46,19 @@ const queue = async function({ id, url }){
         return;
     }
 
+    const start = performance.now();
+
     const worker = new Worker(path.join(process.cwd(), "src", "service", "detector.js"), {
         workerData: { id, url },
-        stdout: true,
-        stderr: true,
     });
 
-    worker.on("message", (message) => sendResult(message));
+    worker.on("message", (message) => {
+        const stop = performance.now();
+        const time = Math.round(stop - start);
+        Log.done(`OCR finished in ${time}ms`);
+
+        sendResult(message);
+    });
 
     worker.on("error", (error) => Log.error("Worker error: ", error));
 
