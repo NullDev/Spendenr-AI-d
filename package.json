@@ -9,9 +9,11 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "start": "node src/app.js",
+    "start:prod": "cross-env NODE_ENV=production bun src/app.js",
+    "start:dev": "npm run lint && cross-env NODE_ENV=development bun src/app.js",
+    "start:test": "cross-env NODE_ENV=test bun tests/sampleRequest.js",
     "lint": "eslint ./src",
-    "dev": "npm run lint && npm start"
+    "lint:fix": "eslint ./src --fix"
   },
   "author": "TheShad0w",
   "repository": {
@@ -27,6 +29,7 @@
     "@babel/core": "^7.26.10",
     "@babel/eslint-parser": "^7.26.10",
     "@types/bun": "^1.2.5",
+    "cross-env": "^7.0.3",
     "eslint": "^9.23.0"
   },
   "dependencies": {
