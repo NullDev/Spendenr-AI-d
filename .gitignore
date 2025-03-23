@@ -7,7 +7,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # config
-config.json
+config/config.custom.js
 
 # image cache
 image_cache/**
