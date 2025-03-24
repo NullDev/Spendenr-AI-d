@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { detectOrga, detectAmount, recognizeWithSettings } from "../src/service/detector.js";
+import { passes } from "../src/service/detector.js";
 import Log from "../src/util/log";
 import { config } from "../config/config";
 
@@ -16,12 +16,11 @@ const FOLDER = [
     "krebshilfe",
 ];
 
-const total = 10767;
+let total = 0;
 let successfully = 0;
 const successfullyFiles = [];
 let failed = 0;
 const failedFiles = [];
-let skipped = 0;
 
 const asserts = async function(){
     for (const folder of FOLDER){
@@ -30,29 +29,9 @@ const asserts = async function(){
         for (const file of files){
             const filePath = path.join(IMAGES, folder, file);
 
-            const defaultText = await recognizeWithSettings(filePath);
-            if (!defaultText){
-                Log.error(`Error while processing ${file}`);
-                skipped++;
+            const { orga, amount } = await passes(filePath);
 
-                await fs.promises
-                    .unlink(filePath)
-                    .then(() => Log.done(`Deleted faulty file ${file}`))
-                    .catch(e1 => Log.error("Error deleting faulty file: " + e1));
-                continue;
-            }
-
-            let detectedOrga = detectOrga(defaultText);
-            let detectedAmount = detectAmount(defaultText);
-
-            // Second pass if necessary
-            if (detectedOrga === null || detectedAmount === null){
-                const retryText = await recognizeWithSettings(filePath, { thresholding_method: 2 });
-                if (retryText){
-                    if (detectedOrga === null) detectedOrga = detectOrga(retryText);
-                    if (detectedAmount === null) detectedAmount = detectAmount(retryText);
-                }
-            }
+            total++;
 
             let shouldBeOrga = null;
             if (folder === "dkfz") shouldBeOrga = 3;
@@ -65,21 +44,21 @@ const asserts = async function(){
             Log.info("-------------------------------------------------");
             Log.info(`File: ${file}`);
 
-            if (detectedOrga !== shouldBeOrga){
-                Log.error(`Organization for ${file} is ${detectedOrga}, should be ${shouldBeOrga}`);
+            if (orga !== shouldBeOrga){
+                Log.error(`Organization for ${file} is ${orga}, should be ${shouldBeOrga}`);
             }
             else {
-                Log.done(`Organization for ${file} is ${detectedOrga}`);
+                Log.done(`Organization for ${file} is ${orga}`);
             }
 
-            if (detectedAmount !== shouldBeAmount){
-                Log.error(`Amount for ${file} is ${detectedAmount}, should be ${shouldBeAmount}`);
+            if (amount !== shouldBeAmount){
+                Log.error(`Amount for ${file} is ${amount}, should be ${shouldBeAmount}`);
             }
             else {
-                Log.done(`Amount for ${file} is ${detectedAmount}`);
+                Log.done(`Amount for ${file} is ${amount}`);
             }
 
-            if (detectedOrga === shouldBeOrga && detectedAmount === shouldBeAmount){
+            if (orga === shouldBeOrga && amount === shouldBeAmount){
                 successfully++;
                 successfullyFiles.push(folder + "/" + file);
             }
@@ -96,7 +75,6 @@ const asserts = async function(){
     Log.done("Finished processing all files:");
     Log.info(`Successfully: ${successfully} of ${total} (${Math.round((successfully / total) * 100)}%)`);
     Log.info(`Failed: ${failed} of ${total} (${Math.round((failed / total) * 100)}%)`);
-    Log.info(`Skipped: ${skipped} of ${total} (${Math.round((skipped / total) * 100)}%)`);
 
     if (failed > 0){
         await fs

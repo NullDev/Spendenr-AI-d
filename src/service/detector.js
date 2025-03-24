@@ -12,7 +12,7 @@ const threshold = config.server.fuzz_threshold;
 
 const ORGS = [
     { id: 1, keywords: ["dkms"] },
-    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."] },
+    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."], exclude: ["dkfz", "krebsforschungszentrum"] },
     { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum"] },
     { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
     { id: 5, keywords: ["österreich", "austria"] },
@@ -102,24 +102,20 @@ const recognizeWithSettings = async(url, customConfig = {}) => {
 };
 
 /**
- * Detect the donation amount and organization from the OCR data
+ * Perform multiple passes of OCR on the image
+ *
+ * @param {String} url
+ * @return {Promise<{ orga: Number|null, amount: Number|null }>}
  */
-const detector = async function(){
-    if (!workerData) return;
-
-    const { id, url } = workerData;
-
-    // First pass: default config
+const passes = async function(url){
+    Log.info("Fist pass: " + url);
     const defaultText = await recognizeWithSettings(url);
-    if (!defaultText){
-        parentPort?.postMessage({ id, orga: null, amount: null });
-        return;
-    }
+    if (!defaultText) return { orga: null, amount: null };
 
     let detectedOrga = detectOrga(defaultText);
     let detectedAmount = detectAmount(defaultText);
 
-    // Second pass if necessary
+    Log.info("Second pass: " + url);
     if (detectedOrga === null || detectedAmount === null){
         const retryText = await recognizeWithSettings(url, { thresholding_method: 2 });
         if (retryText){
@@ -128,18 +124,37 @@ const detector = async function(){
         }
     }
 
+    Log.info("Third pass: " + url);
+    if (detectedOrga === null || detectedAmount === null){
+        const finalText = await recognizeWithSettings(url, { thresholding_method: 3 });
+        if (finalText){
+            if (detectedOrga === null) detectedOrga = detectOrga(finalText);
+            if (detectedAmount === null) detectedAmount = detectAmount(finalText);
+        }
+    }
+
+    return { orga: detectedOrga, amount: detectedAmount };
+};
+
+/**
+ * Detect the donation amount and organization from the OCR data
+ */
+const detector = async function(){
+    if (!workerData) return;
+
+    const { id, url } = workerData;
+
+    const { orga, amount } = await passes(url);
+
     parentPort?.postMessage({
         id,
-        orga: detectedOrga || null,
-        amount: detectedAmount || null,
+        orga: orga || null,
+        amount: amount || null,
     });
 };
 
 (async() => await detector())();
 
 export {
-    detectOrga,
-    detectAmount,
-    cleanText,
-    recognizeWithSettings,
+    passes,
 };
