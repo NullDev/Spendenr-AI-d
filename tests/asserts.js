@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
-import { partial_ratio as partialRatio } from "fuzzball";
 import tesseract from "node-tesseract-ocr";
+import { detectOrga, detectAmount } from "../src/service/detector.js";
 import Log from "../src/util/log";
 import { config } from "../config/config";
 
@@ -16,71 +16,6 @@ const FOLDER = [
     "kinderkrebsstiftung",
     "krebshilfe",
 ];
-
-const threshold = config.server.fuzz_threshold;
-
-const ORGS = [
-    { id: 1, keywords: ["dkms"] },
-    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."] },
-    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum"] },
-    { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
-    { id: 5, keywords: ["österreich", "austria"] },
-    { id: 6, keywords: ["schweiz", "swiss"] },
-    { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber"] },
-    { id: 10, keywords: ["depression"] },
-    { id: 11, keywords: ["tierschutz", "naturschutz", "tiernot"] },
-    { id: 12, keywords: ["ukraine"] },
-    { id: 13, keywords: ["drk", "deutsches rotes kreuz"], exclude: ["ukraine"] },
-];
-
-/**
- * Detect the donation amount from the OCR data
- *
- * @param {String} data
- * @returns {Number|null}
- */
-const detectAmount = function(data){
-    const matchGroups = data.match(
-        /((eur|chf|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|\$|€|euro|franken|dollar))*/gi,
-    );
-
-    if (!matchGroups || matchGroups.length < 1){
-        return null;
-    }
-
-    const groups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
-
-    if (groups.length < 1){
-        if ((/dkms(\d+)/ig.test(data) || data.includes("leben")) && /das\s?geheimnis\s?des/gi.test(data)){
-            return 5;
-        }
-        return null;
-    }
-
-    return Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
-};
-
-/**
- * Detect the organization from the OCR data
- *
- * @param {String} data
- * @returns {Number|null}
- */
-const detectOrga = function(data){
-    const s = data.toLowerCase();
-
-    for (const org of ORGS){
-        for (const keyword of org.keywords){
-            const score = partialRatio(s, keyword.toLowerCase());
-            if (score >= threshold || s.includes(keyword)){
-                if (org.exclude && org.exclude.some(ex => s.includes(ex))) continue;
-                return org.id;
-            }
-        }
-    }
-
-    return null;
-};
 
 let total = 0;
 let successfully = 0;
@@ -103,6 +38,7 @@ const asserts = async function(){
                     lang: "deu",
                     oem: 1,
                     psm: 3,
+                    thresholding_method: 2,
                 });
             }
             catch (e){
@@ -119,7 +55,8 @@ const asserts = async function(){
 
             const text = raw
                 .replace(/(\s+)|(\r\n|\n|\r)/gm, " ")
-                .trim();
+                .trim()
+                .toLowerCase();
 
             const orgaData = detectOrga(text);
             const amountData = detectAmount(text);
@@ -153,11 +90,11 @@ const asserts = async function(){
 
             if (orgaData === shouldBeOrga && amountData === shouldBeAmount){
                 successfully++;
-                successfullyFiles.push(file);
+                successfullyFiles.push(folder + "/" + file);
             }
             else {
                 failed++;
-                failedFiles.push(file);
+                failedFiles.push(folder + "/" + file);
             }
         }
     }
@@ -166,9 +103,9 @@ const asserts = async function(){
     Log.info("-------------------------------------------------");
 
     Log.done("Finished processing all files:");
-    Log.info(`Successfully: ${successfully} of ${total}`);
-    Log.info(`Failed: ${failed} of ${total}`);
-    Log.info(`Skipped: ${skipped} of ${total}`);
+    Log.info(`Successfully: ${successfully} of ${total} (${Math.round((successfully / total) * 100)}%)`);
+    Log.info(`Failed: ${failed} of ${total} (${Math.round((failed / total) * 100)}%)`);
+    Log.info(`Skipped: ${skipped} of ${total} (${Math.round((skipped / total) * 100)}%)`);
 
     if (failed > 0){
         await fs
