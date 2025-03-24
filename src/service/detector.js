@@ -47,7 +47,7 @@ const detectAmount = function(data){
     if (groups.length < 1) return null;
 
     const v = Math.abs(Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", ".")));
-    return v === 0 || v > 100000 ? null : v;
+    return v < 5 || v > 100000 ? null : v;
 };
 
 /**
@@ -75,8 +75,7 @@ const detectOrga = function(data){
  * @param {String} raw
  * @returns {String}
  */
-const cleanText = (raw) =>
-    raw.replace(/(\s+)|(\r\n|\n|\r)/gm, " ").trim().toLowerCase();
+const cleanText = (raw) => raw.replace(/(\s+)|(\r\n|\n|\r)/gm, " ").trim().toLowerCase();
 
 /**
  * Recognize text from an image using Tesseract
