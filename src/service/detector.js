@@ -24,6 +24,12 @@ const ORGS = [
     { id: 13, keywords: ["drk", "deutsches rotes kreuz"], exclude: ["ukraine"] },
 ];
 
+/**
+ * Parse a locale number from a string
+ *
+ * @param {String} str
+ * @returns {Number}
+ */
 const parseLocaleNumber = function(str){
     if (!str) return 0;
 
