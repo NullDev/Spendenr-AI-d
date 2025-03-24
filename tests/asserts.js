@@ -17,10 +17,13 @@ const FOLDER = [
 ];
 
 let total = 0;
+
 let successfully = 0;
 const successfullyFiles = [];
 let failed = 0;
 const failedFiles = [];
+let partialFailed = 0;
+const partialFailedFiles = [];
 
 const asserts = async function(){
     for (const folder of FOLDER){
@@ -62,6 +65,13 @@ const asserts = async function(){
                 successfully++;
                 successfullyFiles.push(folder + "/" + file);
             }
+            else if (
+                (orga === shouldBeOrga && amount !== shouldBeAmount)
+                || (orga !== shouldBeOrga && amount === shouldBeAmount)
+            ){
+                partialFailed++;
+                partialFailedFiles.push(folder + "/" + file);
+            }
             else {
                 failed++;
                 failedFiles.push(folder + "/" + file);
@@ -75,6 +85,7 @@ const asserts = async function(){
     Log.done("Finished processing all files:");
     Log.info(`Successfully: ${successfully} of ${total} (${Math.round((successfully / total) * 100)}%)`);
     Log.info(`Failed: ${failed} of ${total} (${Math.round((failed / total) * 100)}%)`);
+    Log.info(`Partially failed: ${partialFailed} of ${total} (${Math.round((partialFailed / total) * 100)}%)`);
 
     if (failed > 0){
         await fs
@@ -90,6 +101,14 @@ const asserts = async function(){
             .writeFile(path.join("tests", "successfully.txt"), successfullyFiles.join("\n"))
             .then(() => Log.done("Successfully files written to successfully.txt"))
             .catch(e => Log.error("Error writing successfully files: ", e));
+    }
+
+    if (partialFailed > 0){
+        await fs
+            .promises
+            .writeFile(path.join("tests", "partialFailed.txt"), partialFailedFiles.join("\n"))
+            .then(() => Log.done("Partially failed files written to partialFailed.txt"))
+            .catch(e => Log.error("Error writing partially failed files: ", e));
     }
 };
 
