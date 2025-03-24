@@ -7,6 +7,8 @@ import { config } from "../../config/config.js";
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
+const threshold = config.server.fuzz_threshold;
+
 const ORGS = [
     { id: 1, keywords: ["dkms"] },
     { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."] },
@@ -16,9 +18,9 @@ const ORGS = [
     { id: 6, keywords: ["schweiz", "swiss"] },
     { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber"] },
     { id: 10, keywords: ["depression"] },
-    { id: 11, keywords: ["tierschutz", "naturschutz"] },
+    { id: 11, keywords: ["tierschutz", "naturschutz", "tiernot"] },
     { id: 12, keywords: ["ukraine"] },
-    { id: 13, keywords: ["drk", "deutsches rotes kreuz"] },
+    { id: 13, keywords: ["drk", "deutsches rotes kreuz"], exclude: ["ukraine"] },
 ];
 
 /**
@@ -50,12 +52,11 @@ const detectAmount = function(data){
 const detectOrga = function(data){
     const s = data.toLowerCase();
 
-    const threshold = config.server.fuzz_threshold;
-
     for (const org of ORGS){
         for (const keyword of org.keywords){
             const score = partialRatio(s, keyword.toLowerCase());
-            if (score >= threshold){
+            if (score >= threshold || s.includes(keyword)){
+                if (org.exclude && org.exclude.some(ex => s.includes(ex))) continue;
                 return org.id;
             }
         }
@@ -70,11 +71,15 @@ const detectOrga = function(data){
 const detector = async function(){
     const { id, url } = workerData;
 
-    const text = await tesseract.recognize(url, {
+    const raw = await tesseract.recognize(url, {
         lang: "deu",
         oem: 1,
         psm: 3,
     });
+
+    const text = raw
+        .replace(/(\s+)|(\r\n|\n|\r)/gm, " ")
+        .trim();
 
     const ocrData = detectAmount(text);
     const orgaData = detectOrga(text);
