@@ -12,7 +12,8 @@
     "start:prod": "cross-env NODE_ENV=production bun src/app.js",
     "start:dev": "npm run lint && cross-env NODE_ENV=development bun src/app.js",
     "start:test": "cross-env NODE_ENV=test bun tests/sampleRequest.js",
-    "start:asserts": "cross-env NODE_ENV=production bun tests/asserts.js",
+    "start:asserts": "cross-env NODE_ENV=test bun tests/asserts.js",
+    "start:remove-success": "cross-env NODE_ENV=test bun tests/removeSuccessful.js",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
   },
