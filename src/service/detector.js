@@ -1,24 +1,25 @@
 import { parentPort, workerData } from "node:worker_threads";
+import { partial_ratio as partialRatio } from "fuzzball";
 import tesseract from "node-tesseract-ocr";
+import { config } from "../../config/config.js";
 
 // =========================== //
 // = Copyright (c) TheShad0w = //
 // =========================== //
 
-const orgaMap = {
-    1: "DKMS",
-    2: "DtKrebshilfe",
-    3: "DKFZ",
-    4: "Deutsche Kinderkrebsstiftung",
-    5: "Österreichische Spendenorganisationen",
-    6: "Schweizer Spendenorganisationen",
-    7: "diverse andere",
-    8: "nicht ersichtlich",
-    10: "Sonstige Depressionshilfe",
-    11: "Sonstige Tier-/Naturschutzorganisationen",
-    12: "Ukraine Nothilfe",
-    13: "DRK ohne Ukraine",
-};
+const ORGS = [
+    { id: 1, keywords: ["dkms"] },
+    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."] },
+    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum"] },
+    { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
+    { id: 5, keywords: ["österreich", "austria"] },
+    { id: 6, keywords: ["schweiz", "swiss"] },
+    { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber"] },
+    { id: 10, keywords: ["depression"] },
+    { id: 11, keywords: ["tierschutz", "naturschutz"] },
+    { id: 12, keywords: ["ukraine"] },
+    { id: 13, keywords: ["drk", "deutsches rotes kreuz"] },
+];
 
 /**
  * Detect the donation amount from the OCR data
@@ -44,12 +45,28 @@ const detectAmount = function(data){
  * Detect the organization from the OCR data
  *
  * @param {String} data
- * @returns {String}
+ * @returns {Number|null}
  */
 const detectOrga = function(data){
+    const s = data.toLowerCase();
 
+    const threshold = config.server.fuzz_threshold;
+
+    for (const org of ORGS){
+        for (const keyword of org.keywords){
+            const score = partialRatio(s, keyword.toLowerCase());
+            if (score >= threshold){
+                return org.id;
+            }
+        }
+    }
+
+    return null;
 };
 
+/**
+ * Detect the donation amount and organization from the OCR data
+ */
 const detector = async function(){
     const { id, url } = workerData;
 

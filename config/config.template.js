@@ -2,6 +2,7 @@ export default {
     server: {
         port: 1337,
         base_url: "/spenden",
+        fuzz_threshold: 75,
     },
     auth: {
         secret: "",
