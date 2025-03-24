@@ -1,6 +1,5 @@
 import path from "node:path";
 import fs from "node:fs";
-import Log from "../src/util/log";
 import { config } from "../config/config";
 
 // =========================== //
@@ -18,10 +17,10 @@ const removeSuccessful = function(){
         const filePath = path.join(IMAGES, img.trim());
         if (fs.existsSync(filePath)){
             fs.rmSync(filePath);
-            Log.done("Removed: " + img);
+            console.log("Removed: " + img);
         }
         else {
-            Log.error("File not found: " + img);
+            console.log("File not found: " + img);
         }
     }
 };
