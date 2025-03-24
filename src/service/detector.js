@@ -36,20 +36,17 @@ const detectAmount = function(data){
     );
 
     if (!matchGroups || matchGroups.length < 1){
-        return null;
-    }
-
-    const groups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
-
-    if (groups.length < 1){
-        if ((/dkms(\d+)/ig.test(data) || data.includes("leben")) && /das\s?geheimnis\s?des/gi.test(data)){
+        if (/dkms(\d+)/ig.test(data) && /das\s?geheimnis\s?des/gi.test(data)){
             return 5;
         }
         return null;
     }
 
-    const v = Math.abs(Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", ".")));
+    const groups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
 
+    if (groups.length < 1) return null;
+
+    const v = Math.abs(Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", ".")));
     return v === 0 || v > 100000 ? null : v;
 };
 
@@ -69,8 +66,39 @@ const detectOrga = function(data){
             }
         }
     }
-
     return null;
+};
+
+/**
+ * Clean the OCR text
+ *
+ * @param {String} raw
+ * @returns {String}
+ */
+const cleanText = (raw) =>
+    raw.replace(/(\s+)|(\r\n|\n|\r)/gm, " ").trim().toLowerCase();
+
+/**
+ * Recognize text from an image using Tesseract
+ *
+ * @param {String} url
+ * @param {Object} [customConfig={}]
+ * @return {Promise<String|null>}
+ */
+const recognizeWithSettings = async(url, customConfig = {}) => {
+    try {
+        const raw = await tesseract.recognize(url, {
+            lang: "deu",
+            oem: 1,
+            psm: 3,
+            ...customConfig,
+        });
+        return cleanText(raw);
+    }
+    catch (e){
+        Log.error("Tesseract error: ", e);
+        return null;
+    }
 };
 
 /**
@@ -81,40 +109,29 @@ const detector = async function(){
 
     const { id, url } = workerData;
 
-    let raw;
-
-    try {
-        raw = await tesseract.recognize(url, {
-            lang: "deu",
-            oem: 1,
-            psm: 3,
-            thresholding_method: 2,
-        });
-    }
-    catch (e){
-        parentPort?.postMessage({
-            id,
-            orga: null,
-            amount: null,
-        });
-
-        Log.error("Tesseract error: ", e);
-
+    // First pass: default config
+    const defaultText = await recognizeWithSettings(url);
+    if (!defaultText){
+        parentPort?.postMessage({ id, orga: null, amount: null });
         return;
     }
 
-    const text = raw
-        .replace(/(\s+)|(\r\n|\n|\r)/gm, " ")
-        .trim()
-        .toLowerCase();
+    let detectedOrga = detectOrga(defaultText);
+    let detectedAmount = detectAmount(defaultText);
 
-    const ocrData = detectAmount(text);
-    const orgaData = detectOrga(text);
+    // Second pass if necessary
+    if (detectedOrga === null || detectedAmount === null){
+        const retryText = await recognizeWithSettings(url, { thresholding_method: 2 });
+        if (retryText){
+            if (detectedOrga === null) detectedOrga = detectOrga(retryText);
+            if (detectedAmount === null) detectedAmount = detectAmount(retryText);
+        }
+    }
 
     parentPort?.postMessage({
         id,
-        orga: orgaData || null,
-        amount: ocrData || null,
+        orga: detectedOrga || null,
+        amount: detectedAmount || null,
     });
 };
 
@@ -123,4 +140,6 @@ const detector = async function(){
 export {
     detectOrga,
     detectAmount,
+    cleanText,
+    recognizeWithSettings,
 };
