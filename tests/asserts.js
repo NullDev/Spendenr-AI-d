@@ -44,13 +44,20 @@ const detectAmount = function(data){
         /((eur|chf|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|\$|€|euro|franken|dollar))*/gi,
     );
 
-    if (!matchGroups || matchGroups.length < 1) return null;
+    if (!matchGroups || matchGroups.length < 1){
+        return null;
+    }
 
     const groups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
 
-    return (groups.length < 1)
-        ? null // @ts-ignore
-        : Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
+    if (groups.length < 1){
+        if ((/dkms(\d+)/ig.test(data) || data.includes("leben")) && /das\s?geheimnis\s?des/gi.test(data)){
+            return 5;
+        }
+        return null;
+    }
+
+    return Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
 };
 
 /**
@@ -146,6 +153,7 @@ const asserts = async function(){
 
             if (orgaData === shouldBeOrga && amountData === shouldBeAmount){
                 successfully++;
+                successfullyFiles.push(file);
             }
             else {
                 failed++;
@@ -154,7 +162,6 @@ const asserts = async function(){
         }
     }
 
-    Log.info("-------------------------------------------------");
     Log.info("-------------------------------------------------");
     Log.info("-------------------------------------------------");
 
@@ -170,7 +177,6 @@ const asserts = async function(){
             .then(() => Log.done("Failed files written to failed.txt"))
             .catch(e => Log.error("Error writing failed files: ", e));
     }
-    Log.info("Wrote failed files to failed.txt");
 
     if (successfully > 0){
         await fs
@@ -179,7 +185,6 @@ const asserts = async function(){
             .then(() => Log.done("Successfully files written to successfully.txt"))
             .catch(e => Log.error("Error writing successfully files: ", e));
     }
-    Log.info("Wrote successfully files to successfully.txt");
 };
 
 (async() => await asserts())();
