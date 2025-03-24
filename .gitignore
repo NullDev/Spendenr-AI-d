@@ -9,10 +9,6 @@ lerna-debug.log*
 # config
 config/config.custom.js
 
-# image cache
-image_cache/**
-!image_cache/.gitkeep
-
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
