@@ -35,13 +35,20 @@ const detectAmount = function(data){
         /((eur|chf|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|\$|€|euro|franken|dollar))*/gi,
     );
 
-    if (!matchGroups || matchGroups.length < 1) return null;
+    if (!matchGroups || matchGroups.length < 1){
+        return null;
+    }
 
     const groups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
 
-    return (groups.length < 1)
-        ? null // @ts-ignore
-        : Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
+    if (groups.length < 1){
+        if ((/dkms(\d+)/ig.test(data) || data.includes("leben")) && /das\s?geheimnis\s?des/gi.test(data)){
+            return 5;
+        }
+        return null;
+    }
+
+    return Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
 };
 
 /**
@@ -51,13 +58,11 @@ const detectAmount = function(data){
  * @returns {Number|null}
  */
 const detectOrga = function(data){
-    const s = data.toLowerCase();
-
     for (const org of ORGS){
         for (const keyword of org.keywords){
-            const score = partialRatio(s, keyword.toLowerCase());
-            if (score >= threshold || s.includes(keyword)){
-                if (org.exclude && org.exclude.some(ex => s.includes(ex))) continue;
+            const score = partialRatio(data, keyword.toLowerCase());
+            if (score >= threshold || data.includes(keyword)){
+                if (org.exclude && org.exclude.some(ex => data.includes(ex))) continue;
                 return org.id;
             }
         }
@@ -95,7 +100,8 @@ const detector = async function(){
 
     const text = raw
         .replace(/(\s+)|(\r\n|\n|\r)/gm, " ")
-        .trim();
+        .trim()
+        .toLowerCase();
 
     const ocrData = detectAmount(text);
     const orgaData = detectOrga(text);
