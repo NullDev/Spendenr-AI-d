@@ -4,6 +4,13 @@
 <p align="center"><b>AI powered Spendenraid evaluation. <br><sub>- With :heart: by TheShad0w</sub></b></p>
 <hr>
 
+# NOTE
+
+The currently up-to-date version can be found in the `ocr-only` branch: <br>
+https://github.com/NullDev/Spendenr-AI-d/tree/ocr-only
+
+<hr>
+
 ## :question: What does it do?
 
 This AI helps with the evaluations of donations during the pr0gramm "Spendenraid". It classifies pictures to see what organisation the donation was for, as well as the amount of money donated.
