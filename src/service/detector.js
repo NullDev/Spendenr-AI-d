@@ -1,6 +1,7 @@
 import { parentPort, workerData } from "node:worker_threads";
 import { partial_ratio as partialRatio } from "fuzzball";
 import tesseract from "node-tesseract-ocr";
+import Log from "../util/log.js";
 import { config } from "../../config/config.js";
 
 // =========================== //
@@ -71,11 +72,26 @@ const detectOrga = function(data){
 const detector = async function(){
     const { id, url } = workerData;
 
-    const raw = await tesseract.recognize(url, {
-        lang: "deu",
-        oem: 1,
-        psm: 3,
-    });
+    let raw;
+
+    try {
+        raw = await tesseract.recognize(url, {
+            lang: "deu",
+            oem: 1,
+            psm: 3,
+        });
+    }
+    catch (e){
+        parentPort?.postMessage({
+            id,
+            orga: null,
+            amount: null,
+        });
+
+        Log.error("Tesseract error: ", e);
+
+        return;
+    }
 
     const text = raw
         .replace(/(\s+)|(\r\n|\n|\r)/gm, " ")
