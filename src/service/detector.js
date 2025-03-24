@@ -44,7 +44,7 @@ const parseLocaleNumber = function(str){
  */
 const detectAmount = function(data){
     const labelRegex = new RegExp(
-        "(betrag)\\s*[:\\-]?\\s*([\\d.,]+)\\s*(€|eur|euro|chf|fr|franken|\\$|dollar)",
+        "(betrag)\\s*[:\\-]?\\s*([\\d.,]+)\\s*(€|eur|euro|chf|fr|franken|\\$|dollar|.?,-)",
         "i",
     );
 
