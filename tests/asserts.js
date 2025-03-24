@@ -1,7 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import tesseract from "node-tesseract-ocr";
-import { detectOrga, detectAmount } from "../src/service/detector.js";
+import { detectOrga, detectAmount, recognizeWithSettings } from "../src/service/detector.js";
 import Log from "../src/util/log";
 import { config } from "../config/config";
 
@@ -17,7 +16,7 @@ const FOLDER = [
     "krebshilfe",
 ];
 
-let total = 0;
+const total = 10767;
 let successfully = 0;
 const successfullyFiles = [];
 let failed = 0;
@@ -31,37 +30,29 @@ const asserts = async function(){
         for (const file of files){
             const filePath = path.join(IMAGES, folder, file);
 
-            let raw = null;
-
-            try {
-                raw = await tesseract.recognize(filePath, {
-                    lang: "deu",
-                    oem: 1,
-                    psm: 3,
-                    thresholding_method: 2,
-                });
-            }
-            catch (e){
-                Log.error(`Error while processing ${file}: ${e}`);
+            const defaultText = await recognizeWithSettings(filePath);
+            if (!defaultText){
+                Log.error(`Error while processing ${file}`);
                 skipped++;
 
                 await fs.promises
                     .unlink(filePath)
                     .then(() => Log.done(`Deleted faulty file ${file}`))
                     .catch(e1 => Log.error("Error deleting faulty file: " + e1));
-
                 continue;
             }
 
-            const text = raw
-                .replace(/(\s+)|(\r\n|\n|\r)/gm, " ")
-                .trim()
-                .toLowerCase();
+            let detectedOrga = detectOrga(defaultText);
+            let detectedAmount = detectAmount(defaultText);
 
-            const orgaData = detectOrga(text);
-            const amountData = detectAmount(text);
-
-            total++;
+            // Second pass if necessary
+            if (detectedOrga === null || detectedAmount === null){
+                const retryText = await recognizeWithSettings(filePath, { thresholding_method: 2 });
+                if (retryText){
+                    if (detectedOrga === null) detectedOrga = detectOrga(retryText);
+                    if (detectedAmount === null) detectedAmount = detectAmount(retryText);
+                }
+            }
 
             let shouldBeOrga = null;
             if (folder === "dkfz") shouldBeOrga = 3;
@@ -74,21 +65,21 @@ const asserts = async function(){
             Log.info("-------------------------------------------------");
             Log.info(`File: ${file}`);
 
-            if (orgaData !== shouldBeOrga){
-                Log.error(`Organization for ${file} is ${orgaData}, should be ${shouldBeOrga}`);
+            if (detectedOrga !== shouldBeOrga){
+                Log.error(`Organization for ${file} is ${detectedOrga}, should be ${shouldBeOrga}`);
             }
             else {
-                Log.done(`Organization for ${file} is ${orgaData}`);
+                Log.done(`Organization for ${file} is ${detectedOrga}`);
             }
 
-            if (amountData !== shouldBeAmount){
-                Log.error(`Amount for ${file} is ${amountData}, should be ${shouldBeAmount}`);
+            if (detectedAmount !== shouldBeAmount){
+                Log.error(`Amount for ${file} is ${detectedAmount}, should be ${shouldBeAmount}`);
             }
             else {
-                Log.done(`Amount for ${file} is ${amountData}`);
+                Log.done(`Amount for ${file} is ${detectedAmount}`);
             }
 
-            if (orgaData === shouldBeOrga && amountData === shouldBeAmount){
+            if (detectedOrga === shouldBeOrga && detectedAmount === shouldBeAmount){
                 successfully++;
                 successfullyFiles.push(folder + "/" + file);
             }
