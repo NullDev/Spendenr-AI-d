@@ -48,7 +48,9 @@ const detectAmount = function(data){
         return null;
     }
 
-    return Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", "."));
+    const v = Math.abs(Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", ".")));
+
+    return v === 0 || v > 100000 ? null : v;
 };
 
 /**
@@ -75,6 +77,8 @@ const detectOrga = function(data){
  * Detect the donation amount and organization from the OCR data
  */
 const detector = async function(){
+    if (!workerData) return;
+
     const { id, url } = workerData;
 
     let raw;
@@ -84,6 +88,7 @@ const detector = async function(){
             lang: "deu",
             oem: 1,
             psm: 3,
+            thresholding_method: 2,
         });
     }
     catch (e){
@@ -114,3 +119,8 @@ const detector = async function(){
 };
 
 (async() => await detector())();
+
+export {
+    detectOrga,
+    detectAmount,
+};
