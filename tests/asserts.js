@@ -77,6 +77,7 @@ const detectOrga = function(data){
 
 let total = 0;
 let successfully = 0;
+const successfullyFiles = [];
 let failed = 0;
 const failedFiles = [];
 let skipped = 0;
@@ -100,6 +101,12 @@ const asserts = async function(){
             catch (e){
                 Log.error(`Error while processing ${file}: ${e}`);
                 skipped++;
+
+                await fs.promises
+                    .unlink(filePath)
+                    .then(() => Log.done(`Deleted faulty file ${file}`))
+                    .catch(e1 => Log.error("Error deleting faulty file: " + e1));
+
                 continue;
             }
 
@@ -144,15 +151,35 @@ const asserts = async function(){
                 failed++;
                 failedFiles.push(file);
             }
-
-            Log.info(`Successfully: ${successfully} of ${total}`);
-            Log.info(`Failed: ${failed} of ${total}`);
-            Log.info(`Skipped: ${skipped} of ${total}`);
-            Log.info(`Failed Files: ${failedFiles.length}`);
-
-            Log.info("-------------------------------------------------");
         }
     }
+
+    Log.info("-------------------------------------------------");
+    Log.info("-------------------------------------------------");
+    Log.info("-------------------------------------------------");
+
+    Log.done("Finished processing all files:");
+    Log.info(`Successfully: ${successfully} of ${total}`);
+    Log.info(`Failed: ${failed} of ${total}`);
+    Log.info(`Skipped: ${skipped} of ${total}`);
+
+    if (failed > 0){
+        await fs
+            .promises
+            .writeFile(path.join("tests", "failed.txt"), failedFiles.join("\n"))
+            .then(() => Log.done("Failed files written to failed.txt"))
+            .catch(e => Log.error("Error writing failed files: ", e));
+    }
+    Log.info("Wrote failed files to failed.txt");
+
+    if (successfully > 0){
+        await fs
+            .promises
+            .writeFile(path.join("tests", "successfully.txt"), successfullyFiles.join("\n"))
+            .then(() => Log.done("Successfully files written to successfully.txt"))
+            .catch(e => Log.error("Error writing successfully files: ", e));
+    }
+    Log.info("Wrote successfully files to successfully.txt");
 };
 
 (async() => await asserts())();
