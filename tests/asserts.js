@@ -29,7 +29,7 @@ const asserts = async function(){
         for (const file of files){
             const filePath = path.join(IMAGES, folder, file);
 
-            const { orga, amount } = await passes(filePath);
+            const { orga, amount } = await passes(filePath, true);
 
             total++;
 
@@ -42,7 +42,7 @@ const asserts = async function(){
             const shouldBeAmount = Number(file.split("__")[0]);
 
             Log.info("-------------------------------------------------");
-            Log.info(`File: ${file}`);
+            Log.info(`File: ${folder}/${file}`);
 
             if (orga !== shouldBeOrga){
                 Log.error(`Organization for ${file} is ${orga}, should be ${shouldBeOrga}`);

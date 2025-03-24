@@ -11,7 +11,7 @@ import { config } from "../../config/config.js";
 const threshold = config.server.fuzz_threshold;
 
 const ORGS = [
-    { id: 1, keywords: ["dkms"] },
+    { id: 1, keywords: ["dkms", "deine geldspende kommt an", "ihre geldspende kommt an"] },
     { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."], exclude: ["dkfz", "krebsforschungszentrum"] },
     { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz."] },
     { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
@@ -55,14 +55,15 @@ const detectAmount = function(data){
         if (v >= 5 && v <= 100000) return v;
     }
 
+    if (data.includes("dkms") && /das\s?geheimnis\s?des/gi.test(data)){
+        return 5;
+    }
+
     const matchGroups = data.match(
         /((eur|chf|fr|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|fr|\$|€|euro|franken|dollar))*/gi,
     );
 
     if (!matchGroups || matchGroups.length < 1){
-        if (/dkms(\d+)/ig.test(data) && /das\s?geheimnis\s?des/gi.test(data)){
-            return 5;
-        }
         return null;
     }
 
@@ -139,10 +140,11 @@ const recognizeWithSettings = async(url, customConfig = {}) => {
  * Perform multiple passes of OCR on the image
  *
  * @param {String} url
+ * @param {Boolean} [dontLog=false]
  * @return {Promise<{ orga: Number|null, amount: Number|null }>}
  */
-const passes = async function(url){
-    Log.info("Fist pass: " + url);
+const passes = async function(url, dontLog = false){
+    if (!dontLog) Log.info("First pass: " + url);
     const defaultText = await recognizeWithSettings(url);
     if (!defaultText) return { orga: null, amount: null };
 
@@ -150,7 +152,7 @@ const passes = async function(url){
     let detectedAmount = detectAmount(defaultText);
 
     if (detectedOrga === null || detectedAmount === null){
-        Log.info("Second pass: " + url);
+        if (!dontLog) Log.info("Second pass: " + url);
         const retryText = await recognizeWithSettings(url, { thresholding_method: 2 });
         if (retryText){
             if (detectedOrga === null) detectedOrga = detectOrga(retryText);
@@ -159,7 +161,7 @@ const passes = async function(url){
     }
 
     if (detectedOrga === null || detectedAmount === null){
-        Log.info("Third pass: " + url);
+        if (!dontLog) Log.info("Third pass: " + url);
         const finalText = await recognizeWithSettings(url, { thresholding_method: 3 });
         if (finalText){
             if (detectedOrga === null) detectedOrga = detectOrga(finalText);
