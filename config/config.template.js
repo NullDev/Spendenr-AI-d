@@ -11,4 +11,7 @@ export default {
         uri: "https://api.spendenraid.rundesballi.com/editPost.php",
         secret: "",
     },
+    testing: {
+        test_img_path: "",
+    },
 };
