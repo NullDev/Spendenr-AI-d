@@ -13,7 +13,7 @@ const threshold = config.server.fuzz_threshold;
 const ORGS = [
     { id: 1, keywords: ["dkms"] },
     { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."], exclude: ["dkfz", "krebsforschungszentrum"] },
-    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum"] },
+    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz."] },
     { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
     { id: 5, keywords: ["österreich", "austria"] },
     { id: 6, keywords: ["schweiz", "swiss"] },
@@ -24,6 +24,18 @@ const ORGS = [
     { id: 13, keywords: ["drk", "deutsches rotes kreuz"], exclude: ["ukraine"] },
 ];
 
+const parseLocaleNumber = function(str){
+    if (!str) return 0;
+
+    const s = str.replace(/[^0-9.,]/g, "").trim();
+
+    if (s.match(/\d+\.\d{3},\d{2}/)) return Math.abs(Number(s.replace(/\./g, "").replace(",", ".")));
+    if (s.match(/\d+,\d{3}\.\d{2}/)) return Math.abs(Number(s.replace(/,/g, "")));
+    if (s.includes(",") && !s.includes(".")) return Math.abs(Number(s.replace(",", ".")));
+
+    return Math.abs(Number(s));
+};
+
 /**
  * Detect the donation amount from the OCR data
  *
@@ -31,8 +43,20 @@ const ORGS = [
  * @returns {Number|null}
  */
 const detectAmount = function(data){
+    const labelRegex = new RegExp(
+        "(betrag)\\s*[:\\-]?\\s*([\\d.,]+)\\s*(€|eur|euro|chf|fr|franken|\\$|dollar)",
+        "i",
+    );
+
+    const labelMatch = data.match(labelRegex);
+
+    if (labelMatch && labelMatch[2]){
+        const v = parseLocaleNumber(labelMatch[2]);
+        if (v >= 5 && v <= 100000) return v;
+    }
+
     const matchGroups = data.match(
-        /((eur|chf|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|\$|€|euro|franken|dollar))*/gi,
+        /((eur|chf|fr|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|fr|\$|€|euro|franken|dollar))*/gi,
     );
 
     if (!matchGroups || matchGroups.length < 1){
@@ -42,11 +66,22 @@ const detectAmount = function(data){
         return null;
     }
 
-    const groups = matchGroups.filter(e => /(eur|chf|\$|€|euro|franken|dollar)/gi.test(e));
+    const groups = matchGroups.filter(e => /(eur|chf|fr|\$|€|euro|franken|dollar)/gi.test(e));
 
     if (groups.length < 1) return null;
 
-    const v = Math.abs(Number(groups[0].trim().replace(/[^0-9.,]/g, "").replaceAll(",", ".")));
+    let v = parseLocaleNumber(groups[0]);
+
+    if (v < 5 || v > 100000){
+        for (const group of groups){
+            const val = parseLocaleNumber(group);
+            if (val >= 5 && val <= 100000){
+                v = val;
+                break;
+            }
+        }
+    }
+
     return v < 5 || v > 100000 ? null : v;
 };
 
@@ -114,8 +149,8 @@ const passes = async function(url){
     let detectedOrga = detectOrga(defaultText);
     let detectedAmount = detectAmount(defaultText);
 
-    Log.info("Second pass: " + url);
     if (detectedOrga === null || detectedAmount === null){
+        Log.info("Second pass: " + url);
         const retryText = await recognizeWithSettings(url, { thresholding_method: 2 });
         if (retryText){
             if (detectedOrga === null) detectedOrga = detectOrga(retryText);
@@ -123,8 +158,8 @@ const passes = async function(url){
         }
     }
 
-    Log.info("Third pass: " + url);
     if (detectedOrga === null || detectedAmount === null){
+        Log.info("Third pass: " + url);
         const finalText = await recognizeWithSettings(url, { thresholding_method: 3 });
         if (finalText){
             if (detectedOrga === null) detectedOrga = detectOrga(finalText);
