@@ -12,9 +12,10 @@ import { config, meta } from "../../config/config.js";
  * Send result to the result server
  *
  * @param {{ id: Number, orga: String, amount: Number }} res
+ * @param {String} img
  */
-const sendResult = async function(res){
-    Log.info("Sending result to server: " + JSON.stringify(res));
+const sendResult = async function(res, img){
+    Log.info("Sending result to server: " + JSON.stringify(res) + " - for img: " + img);
 
     await fetch(`${
         process.env.NODE_ENV !== "production"
@@ -60,7 +61,7 @@ const queue = async function({ id, url }){
         const time = Math.round(stop - start);
         Log.done(`OCR finished in ${time}ms`);
 
-        sendResult(message);
+        sendResult(message, url);
     });
 
     worker.on("error", (error) => Log.error("Worker error: ", error));
