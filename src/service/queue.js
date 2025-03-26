@@ -2,7 +2,7 @@ import path from "node:path";
 import { Worker } from "node:worker_threads";
 import { performance } from "node:perf_hooks";
 import Log from "../util/log.js";
-import { config } from "../../config/config.js";
+import { config, meta } from "../../config/config.js";
 
 // =========================== //
 // = Copyright (c) TheShad0w = //
@@ -24,6 +24,7 @@ const sendResult = async function(res){
         method: "POST",
         headers: {
             "Content-Type": "application/json; charset=utf-8",
+            "User-Agent": `${meta.getName()} v${meta.getVersion()} - ${meta.getAuthor()}`,
             apiAuth: config.result_server.secret,
         },
         body: JSON.stringify(res),
