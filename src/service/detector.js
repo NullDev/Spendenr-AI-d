@@ -89,6 +89,12 @@ const detectAmount = function(data){
         }
     }
 
+    if (String(v).match(/^\d{1}01$/)){
+        const corrected = String(v).replace(/01$/, "0");
+        const correctedValue = parseLocaleNumber(corrected);
+        v = correctedValue;
+    }
+
     return v < 5 || v > 100000 ? null : v;
 };
 
