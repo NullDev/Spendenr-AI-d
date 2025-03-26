@@ -11,15 +11,15 @@ import { config } from "../../config/config.js";
 const threshold = config.server.fuzz_threshold;
 
 const ORGS = [
-    { id: 1, keywords: ["dkms", "deine geldspende kommt an", "ihre geldspende kommt an"] },
-    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren."], exclude: ["dkfz", "krebsforschungszentrum"] },
-    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz."] },
+    { id: 1, keywords: ["dkms", "deine geldspende kommt an", "ihre geldspende kommt an", "we delete blood cancer"], exclude: ["dkfz"] },
+    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren.", "krebshilfe.de"], exclude: ["dkfz", "krebsforschungszentrum"] },
+    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz.", "forschen für ein leben ohne krebs"] },
     { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
     { id: 5, keywords: ["österreich", "austria"] },
-    { id: 6, keywords: ["schweiz", "swiss"] },
-    { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber"] },
+    { id: 6, keywords: ["schweiz", "swiss", "public eye", "krebsliga"] },
+    { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber", "gobanyo", "go banyo", "hellhound", "make a wish", "caritas", "welthunger", "sternenkinder", "regenbogenland", "betterplace", "autismus", "aninova", "hirnstiftung", "bärenherz"] },
     { id: 10, keywords: ["depression"] },
-    { id: 11, keywords: ["tierschutz", "naturschutz", "tiernot"] },
+    { id: 11, keywords: ["tierschutz", "naturschutz", "tiernot", "tierfreunde", "eichhörnchen", "umwelt", "katzen", "kitten"] },
     { id: 12, keywords: ["ukraine"] },
     { id: 13, keywords: ["drk", "deutsches rotes kreuz"], exclude: ["ukraine"] },
 ];
