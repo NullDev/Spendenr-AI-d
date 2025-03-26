@@ -66,7 +66,7 @@ const detectAmount = function(data){
     }
 
     const matchGroups = data.match(
-        /((eur|chf|fr|\$|€|euro|franken|dollar)(\s)*)*(?<amount>(\d+(?:(\.|\,)\d+)?)+)((\s)*(eur|chf|fr|\$|€|euro|franken|dollar))*/gi,
+        /((eur|chf|fr|\$|€|euro|franken|dollar)(\s)*)*(?<amount>\d{1,2}(?:\s{0,1}\d)?(?:[.,]\d+)?)((\s)*(eur|chf|fr|\$|€|euro|franken|dollar))*/gi,
     );
 
     if (!matchGroups || matchGroups.length < 1){
