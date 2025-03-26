@@ -59,7 +59,7 @@ server.post(config.server.base_url + "/classify", (
     /** @type {import("fastify").FastifyRequest<{ Body: Array<{ id: Number, url: String }> }>} */ req,
     reply,
 ) => {
-    if (req.headers.token !== config.server.token){
+    if (req.headers.token !== config.auth.secret){
         Log.warn("Unauthorized request to /classify");
         reply.status(401).send({ status: 401, message: "Unauthorized" });
         return;

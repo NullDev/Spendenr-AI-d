@@ -31,6 +31,7 @@ const sendSampleRequest = async function(){
     const response = await fetch(`http://localhost:${config.server.port}/spenden/classify`, {
         method: "POST",
         headers: {
+            token: config.auth.secret,
             "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify(sampleData),
