@@ -84,7 +84,14 @@ const detectAmount = function(data){
 
     const groups = matchGroups.filter(e => /(eur|chf|fr|\$|€|euro|franken|dollar)/gi.test(e));
 
-    if (groups.length < 1) return null;
+    if (groups.length < 1){
+        const fallbackMatch = data.match(/-?\s?(\d{1,2}(?:\s{0,1}\d)?(?:[.,]\d+)?)/);
+        if (fallbackMatch && fallbackMatch[1]){
+            const v = parseLocaleNumber(fallbackMatch[1]);
+            if (v >= 5 && v <= 100000) return v;
+        }
+        return null;
+    }
 
     let v = parseLocaleNumber(groups[0]);
 
