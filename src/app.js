@@ -30,9 +30,9 @@ Log.debug("Node Environment: " + process.env.NODE_ENV, true);
 Log.debug("NodeJS version: " + process.version, true);
 Log.debug("OS: " + process.platform + " " + process.arch, true);
 Log.debug("Tesseract version: " + tesseractVersion, true);
-Log.debug("Result Server: " + process.env.NODE_ENV !== "production"
+Log.debug("Result Server: " + (process.env.NODE_ENV !== "production"
     ? `http://localhost:${config.server.port}${config.server.base_url}/test`
-    : config.result_server.uri
+    : config.result_server.uri)
 , true);
 
 const server = fastify({
