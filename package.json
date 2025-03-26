@@ -20,12 +20,12 @@
   "author": "TheShad0w",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pr0-dev/Spendenr-AI-d.git"
+    "url": "git+https://github.com/NullDev/Spendenr-AI-d.git"
   },
   "bugs": {
-    "url": "https://github.com/pr0-dev/Spendenr-AI-d/issues"
+    "url": "https://github.com/NullDev/Spendenr-AI-d/issues"
   },
-  "homepage": "https://github.com/pr0-dev/Spendenr-AI-d",
+  "homepage": "https://github.com/NullDev/Spendenr-AI-d",
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/core": "^7.26.10",
