@@ -14,6 +14,8 @@ import { config } from "../../config/config.js";
  * @param {{ id: Number, orga: String, amount: Number }} res
  */
 const sendResult = async function(res){
+    Log.info("Sending result to server: " + JSON.stringify(res));
+
     await fetch(`${
         process.env.NODE_ENV !== "production"
             ? `http://localhost:${config.server.port}${config.server.base_url}/test`
@@ -31,7 +33,7 @@ const sendResult = async function(res){
         try { r = JSON.stringify(d); } // eslint-disable-next-line no-unused-vars
         catch (e){ r = d; }
 
-        Log.done("Sent result: " + r);
+        Log.done("Received submit answer: " + r);
     }).catch(err => Log.error(err));
 };
 
