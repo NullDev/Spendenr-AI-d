@@ -49,12 +49,7 @@ const parseLocaleNumber = function(str){
  * @returns {Number|null}
  */
 const detectAmount = function(data){
-    const labelRegex = new RegExp(
-        "(betrag)\\s*[:\\-]?\\s*([\\d.,]+)\\s*(€|eur|euro|chf|fr|franken|\\$|dollar|.?,-)",
-        "i",
-    );
-
-    const labelMatch = data.match(labelRegex);
+    const labelMatch = data.match(/(betrag)\s*[:\-]?\s*([\d.,]+)\s*(€|eur|euro|chf|fr|franken|\$|dollar|.?,-)/i);
 
     if (labelMatch && labelMatch[2]){
         const v = parseLocaleNumber(labelMatch[2]);
@@ -85,13 +80,21 @@ const detectAmount = function(data){
     const groups = matchGroups.filter(e => /(eur|chf|fr|\$|€|euro|franken|dollar)/gi.test(e));
 
     if (groups.length < 1){
-        const fallbackMatch = data.match(/-\s?(\d{1,2}(?:\s{0,1}\d)?(?:[.,]\d+)?)/);
+        const fallbackMatch = data.match(/\s-\s?(\d{1,2}(?:\s{0,1}\d)?(?:[.,]\d+)?)/);
         if (fallbackMatch && fallbackMatch[1]){
             const v = parseLocaleNumber(fallbackMatch[1]);
             if (v >= 5 && v <= 100000) return v;
         }
         return null;
     }
+
+    groups.sort((a, b) => {
+        const aEur = a.match(/eur|euro/i);
+        const bEur = b.match(/eur|euro/i);
+        if (aEur && !bEur) return -1;
+        if (!aEur && bEur) return 1;
+        return 0;
+    });
 
     let v = parseLocaleNumber(groups[0]);
 
@@ -107,6 +110,12 @@ const detectAmount = function(data){
 
     if (String(v).match(/^\d{1}01$/)){
         const corrected = String(v).replace(/01$/, "0");
+        const correctedValue = parseLocaleNumber(corrected);
+        v = correctedValue;
+    }
+
+    if (String(v).match(/^\d{1}05$/)){
+        const corrected = String(v).replace(/05$/, ".05");
         const correctedValue = parseLocaleNumber(corrected);
         v = correctedValue;
     }
