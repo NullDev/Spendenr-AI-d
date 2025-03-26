@@ -10,6 +10,14 @@ This AI helps with the evaluations of donations during the pr0gramm "Spendenraid
 
 <hr>
 
+## :information_source: Update
+
+New version is OCR only.
+
+Old ReadMe Below ⬇️
+
+<hr>
+
 ## :information_source: Info
 
 The AI operates multithreaded and asynchronous. It receives a "batch" of image ID's which are processed one after the other in a "queue" (image download, organisation classification, donation amount evaluation, image deletion, sending the result to the server). One worker thread is opened per batch. Batches can arrive in parallel, i.e. if one batch is currently being processed, another one can arrive at the same time. These are then processed independently of each other. It is recommended to deploy the whole project with [PM2](https://pm2.io/) in [Cluster Mode](https://pm2.keymetrics.io/docs/usage/cluster-mode/) with about 5 instances, so that another OSI-layer 7 horizontal scaling takes place. A ready-made configuration file is [available in the repository]((https://github.com/NullDev/Spendenr-AI-d/blob/master/pm2-service.config.json)).
