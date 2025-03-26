@@ -12,9 +12,9 @@ const threshold = config.server.fuzz_threshold;
 
 const ORGS = [
     { id: 1, keywords: ["dkms", "deine geldspende kommt an", "ihre geldspende kommt an", "we delete blood cancer"], exclude: ["dkfz"] },
-    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren.", "krebshilfe.de"], exclude: ["dkfz", "krebsforschungszentrum"] },
-    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz.", "forschen für ein leben ohne krebs"] },
-    { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"] },
+    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren.", "krebshilfe.de"], exclude: ["dkfz", "krebsforschungszentrum", "österreich", "schweiz"] },
+    { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz.", "forschen für ein leben ohne krebs"], exclude: ["österreich", "schweiz"] },
+    { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"], exclude: ["österreich", "schweiz"] },
     { id: 5, keywords: ["österreich", "austria"] },
     { id: 6, keywords: ["schweiz", "swiss", "public eye", "krebsliga"] },
     { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber", "gobanyo", "go banyo", "hellhound", "make a wish", "caritas", "welthunger", "sternenkinder", "regenbogenland", "betterplace", "autismus", "aninova", "hirnstiftung", "bärenherz"] },
