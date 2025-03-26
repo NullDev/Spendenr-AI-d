@@ -56,7 +56,7 @@ const detectAmount = function(data){
         if (v >= 5 && v <= 100000) return v;
     }
 
-    if (data.includes("dkms") && /das\s?geheimnis\s?des/gi.test(data) && !data.includes("leben")){
+    if ((data.includes("dkms") || data.includes("charity")) && /das\s?geheimnis\s?des/gi.test(data) && !data.includes("leben")){
         const m = data.match(/das\s?geheimnis\s?des/gi);
         if (m && m.length > 0){
             const v = m.length * 5;
@@ -64,7 +64,7 @@ const detectAmount = function(data){
         }
     }
 
-    if (data.includes("krebshilfe") && /es\s?sind\s?die\s?vielen\s?kleinen\s?taten/gi.test(data)){
+    if ((data.includes("krebshilfe") || data.includes("charity")) && /es\s?sind\s?die\s?vielen\s?kleinen\s?taten/gi.test(data)){
         if (data.includes("krebshilfe5")) return 5;
         if (data.includes("krebshilfe10")) return 10;
     }
