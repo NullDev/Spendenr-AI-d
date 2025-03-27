@@ -14,7 +14,7 @@ This AI helps with the evaluations of donations during the pr0gramm "Spendenraid
 
 New version is OCR only.
 
-Old ReadMe Below ⬇️
+Old ReadMe Below ⬇️ (or [go to master branch](https://github.com/NullDev/Spendenr-AI-d/tree/master))
 
 <hr>
 
