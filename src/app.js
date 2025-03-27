@@ -26,8 +26,8 @@ Log.raw(
 Log.info("--- START ---");
 Log.info(appname + " v" + version + " by " + author);
 
-Log.debug("Node Environment: " + process.env.NODE_ENV, true);
-Log.debug("NodeJS version: " + process.version, true);
+Log.debug("Environment: " + process.env.NODE_ENV, true);
+Log.debug("Bun version: " + process.versions.bun, true);
 Log.debug("OS: " + process.platform + " " + process.arch, true);
 Log.debug("Tesseract version: " + tesseractVersion, true);
 Log.debug("Result Server: " + (process.env.NODE_ENV !== "production"
@@ -53,8 +53,12 @@ server.get(config.server.base_url + "/", (_, reply) => {
         version,
         env: process.env.NODE_ENV,
         uptime: process.uptime(),
-        node_version: process.version,
+        bun_version: process.versions.bun,
         tesseract_version: tesseractVersion,
+        os: {
+            platform: process.platform,
+            arch: process.arch,
+        },
     });
 });
 
