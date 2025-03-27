@@ -11,8 +11,8 @@ import { config } from "../../config/config.js";
 const threshold = config.server.fuzz_threshold;
 
 const ORGS = [
-    { id: 1, keywords: ["dkms", "deine geldspende kommt an", "ihre geldspende kommt an", "we delete blood cancer"], exclude: ["dkfz"] },
-    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren.", "krebshilfe.de"], exclude: ["dkfz", "krebsforschungszentrum", "österreich", "schweiz"] },
+    { id: 1, keywords: ["dkms", "deine geldspende kommt an", "ihre geldspende kommt an", "we delete blood cancer", "das geheimnis des glücks"], exclude: ["dkfz"] },
+    { id: 2, keywords: ["deutsche krebshilfe", "helfen. forschen. informieren.", "krebshilfe.de", "es sind die vielen kleinen taten"], exclude: ["dkfz", "krebsforschungszentrum", "österreich", "schweiz"] },
     { id: 3, keywords: ["dkfz", "deutsches krebsforschungszentrum", "dt. krebsforschungsz.", "forschen für ein leben ohne krebs"], exclude: ["österreich", "schweiz"] },
     { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"], exclude: ["österreich", "schweiz"] },
     { id: 5, keywords: ["österreich", "austria"] },
