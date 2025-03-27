@@ -17,9 +17,9 @@ const ORGS = [
     { id: 4, keywords: ["kinderkrebsstiftung", "deutsche kinder krebs stiftung", "kinder krebs stiftung"], exclude: ["österreich", "schweiz"] },
     { id: 5, keywords: ["österreich", "austria"] },
     { id: 6, keywords: ["schweiz", "swiss", "public eye", "krebsliga"] },
-    { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber", "gobanyo", "go banyo", "hellhound", "make a wish", "caritas", "welthunger", "sternenkinder", "regenbogenland", "betterplace", "autismus", "aninova", "hirnstiftung", "bärenherz"] },
+    { id: 7, keywords: ["seenot", "dgzrs", "ärzte ohne grenzen", "humanitas", "parkinson", "kriegsgräber", "gobanyo", "go banyo", "hellhound", "make a wish", "caritas", "welthunger", "sternenkinder", "regenbogenland", "betterplace", "autismus", "aninova", "hirnstiftung", "bärenherz", "diabetes"] },
     { id: 10, keywords: ["depression"] },
-    { id: 11, keywords: ["tierschutz", "naturschutz", "tiernot", "tierfreunde", "eichhörnchen", "umwelt", "katzen", "kitten"] },
+    { id: 11, keywords: ["tierschutz", "naturschutz", "tiernot", "tierfreunde", "eichhörnchen", "umwelt", "katzen", "kitten", "sea shepherd", "seashepherd"] },
     { id: 12, keywords: ["ukraine"] },
     { id: 13, keywords: ["drk", "deutsches rotes kreuz"], exclude: ["ukraine"] },
 ];
@@ -224,6 +224,8 @@ const detector = async function(){
         orga: orga || null,
         amount: amount || null,
     });
+
+    process.exit(0);
 };
 
 (async() => await detector())();
